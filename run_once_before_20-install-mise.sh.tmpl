@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Exit on error
+set -e
+
+# Ensure ~/.local/bin exists and is in PATH
+mkdir -p "$HOME/.local/bin"
+export PATH="$HOME/.local/bin:$PATH"
+
+if ! command -v mise >/dev/null 2>&1; then
+    echo "Installing mise..."
+    curl https://mise.run | sh
+else
+    echo "mise is already installed."
+fi

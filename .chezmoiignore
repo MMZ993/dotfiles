@@ -1,0 +1,76 @@
+# Secrets and private files
+.env_secrets
+.bash_private
+*.key
+*.pem
+*.p12
+*.pkcs12
+.creds
+
+# Generated files and caches
+.bash_completion.d/*
+.bash_history
+.cache/*
+.local/share/mise/shims/*
+.local/share/mise/installs/*
+.local/state/*
+.python-version
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+*.bak
+*.orig
+
+# Lock files (mise)
+dot_config/mise/config.toml
+
+# Editor directories
+.vscode/*
+.idea/*
+*.sublime-project
+*.sublime-workspace
+
+# OS-specific files
+.Trash-*
+.nfs*
+
+# Node
+node_modules/*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python
+__pycache__/*
+*.py[cod]
+*$py.class
+.Python
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Rust target directories
+target/
+
+# Go
+go.sum
+vendor/
+
+# Terraform
+.terraform/*
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+
+# Docker
+docker-compose.override.yml
+
+# Logs
+*.log
+logs/*

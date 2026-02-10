@@ -1,0 +1,10 @@
+{{- $email := promptStringOnce . "email" "Email address" -}}
+{{- $name := promptStringOnce . "name" "Full name" -}}
+
+sourceDir = "{{ .chezmoi.sourceDir }}"
+
+[data]
+    email = {{ $email | quote }}
+    name = {{ $name | quote }}
+
+

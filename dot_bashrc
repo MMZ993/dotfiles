@@ -1,0 +1,135 @@
+# .bashrc
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+    . /etc/bashrc
+fi
+
+# PATH setup
+for dir in "$HOME/.local/bin" "$HOME/bin" "$HOME/.opencode/bin"; do
+    if [ -d "$dir" ] && [[ ":$PATH:" != *":$dir:"* ]]; then
+        PATH="$dir:$PATH"
+    fi
+done
+
+# Mise
+export PATH
+if command -v mise >/dev/null 2>&1; then
+    eval "$(mise activate bash)"
+else
+    # Fallback to shims if mise isn't activated (good for non-interactive)
+    [ -d "$HOME/.local/share/mise/shims" ] && export PATH="$HOME/.local/share/mise/shims:$PATH"
+fi
+
+# History settings
+HISTSIZE=10000
+HISTFILESIZE=20000
+HISTCONTROL=ignoreboth
+shopt -s histappend
+shopt -s cmdhist
+export HISTTIMEFORMAT="%F %T "
+
+# Shell options
+shopt -s cdspell
+shopt -s dirspell
+shopt -s checkwinsize
+shopt -s globstar
+shopt -s extglob
+shopt -s histverify
+shopt -s huponexit
+
+# Source functions
+if [ -f ~/.bash_functions ]; then
+    . ~/.bash_functions
+fi
+
+# Source aliases
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
+
+# Environment variables
+export EDITOR=nvim
+export VISUAL=nvim
+export PAGER=less
+export LESS="-RiN"
+
+# ddgr prompt color bug fix
+export DISABLE_PROMPT_COLOR=1
+
+# Colorize man pages
+export LESS_TERMCAP_mb=$'\E[1;31m'
+export LESS_TERMCAP_md=$'\E[1;36m'
+export LESS_TERMCAP_me=$'\E[0m'
+export LESS_TERMCAP_se=$'\E[0m'
+export LESS_TERMCAP_so=$'\E[01;44;33m'
+export LESS_TERMCAP_ue=$'\E[0m'
+export LESS_TERMCAP_us=$'\E[1;32m'
+
+# Browser
+if command -v w3m >/dev/null 2>&1; then
+    export BROWSER='w3m'
+fi
+
+# Source secrets and private config if they exist (not in git)
+[ -f ~/.env_secrets ] && source ~/.env_secrets
+[ -f ~/.bash_private ] && source ~/.bash_private
+
+# Source additional config from bashrc.d
+if [ -d ~/.bashrc.d ]; then
+    for rc in "$HOME"/.bashrc.d/*.sh; do
+        [ -r "$rc" ] && . "$rc"
+    done
+fi
+unset rc
+
+# Starship prompt 
+if command -v starship >/dev/null 2>&1; then
+    eval "$(starship init bash)"
+fi
+
+# Source system completion if available
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
+
+# Source custom completions
+if [ -d ~/.bash_completion.d ]; then
+    for completion in ~/.bash_completion.d/*; do
+        [ -r "$completion" ] && . "$completion"
+    done
+fi
+
+# Fuzzy Finder
+if command -v fzf >/dev/null 2>&1; then
+    # Set up fzf key bindings and fuzzy completion
+    source <(fzf --bash)
+    
+    # TokyoNight color scheme for fzf
+    export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border --color=fg:#c0caf5,bg:#1a1b26,hl:#bb9af7 --color=fg+:#c0caf5,bg+:#2f3549,hl+:#7dcfff --color=info:#7aa2f7,prompt:#7dcfff,pointer:#7dcfff,marker:#9ece6a,spinner:#9ece6a,header:#7aa2f7'
+    
+    # Use fd for fzf if available (faster and respects .gitignore)
+    if command -v fd >/dev/null 2>&1; then
+        export FZF_DEFAULT_COMMAND='fd --type f --strip-cwd-prefix --hidden --follow --exclude .git'
+        export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+    fi
+fi
+
+# LS_COLORS
+if command -v vivid >/dev/null 2>&1; then
+    export LS_COLORS="$(vivid generate tokyonight-night)"
+else
+    # Comprehensive TokyoNight-compatible fallback
+    export LS_COLORS='rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=01;37;41:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.7z=01;31:*.ace=01;31:*.alz=01;31:*.apk=01;31:*.arc=01;31:*.arj=01;31:*.bz=01;31:*.bz2=01;31:*.cab=01;31:*.cpio=01;31:*.crate=01;31:*.deb=01;31:*.drpm=01;31:*.dwm=01;31:*.dz=01;31:*.ear=01;31:*.egg=01;31:*.esd=01;31:*.gz=01;31:*.jar=01;31:*.lha=01;31:*.lrz=01;31:*.lz=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.lzo=01;31:*.pyz=01;31:*.rar=01;31:*.rpm=01;31:*.rz=01;31:*.sar=01;31:*.swm=01;31:*.t7z=01;31:*.tar=01;31:*.taz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tgz=01;31:*.tlz=01;31:*.txz=01;31:*.tz=01;31:*.tzo=01;31:*.tzst=01;31:*.udeb=01;31:*.war=01;31:*.whl=01;31:*.wim=01;31:*.xz=01;31:*.z=01;31:*.zip=01;31:*.zoo=01;31:*.zst=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.jxl=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=01;36:*.au=01;36:*.flac=01;36:*.m4a=01;36:*.mid=01;36:*.midi=01;36:*.mka=01;36:*.mp3=01;36:*.mpc=01;36:*.ogg=01;36:*.ra=01;36:*.wav=01;36:*.oga=01;36:*.opus=01;36:*.spx=01;36:*.xspf=01;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00:'
+fi
+export CLICOLOR=1
+
+# De-duplicate PATH
+if [ -n "$PATH" ]; then
+    PATH=$(echo -n "$PATH" | awk -v RS=: '!($0 in a) {a[$0]; printf "%s%s", (NR==1 ? "" : ":"), $0}')
+fi
+export PATH

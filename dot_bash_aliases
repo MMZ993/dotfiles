@@ -1,0 +1,98 @@
+# --- Smart Tool Aliases ---
+# These add modern alternatives without overriding standard POSIX commands
+
+# ls -> eza (modern ls)
+if command -v eza >/dev/null 2>&1; then
+    alias l='eza --icons --group-directories-first'
+    alias ll='eza -lbF --git --icons'
+    alias la='eza -lbhHigmuSa --git --icons'
+    alias lt='eza --tree --icons'
+else
+    alias l='ls -F --color=auto --group-directories-first'
+    alias ll='ls -lh'
+    alias la='ls -lAh'
+fi
+
+# bat handle (Ubuntu/Debian use batcat)
+if ! command -v bat >/dev/null 2>&1 && command -v batcat >/dev/null 2>&1; then
+    alias bat='batcat'
+fi
+
+# nvim -> better vi
+if command -v nvim >/dev/null 2>&1; then
+    alias v='nvim'
+    alias vi='nvim'
+    alias vim='nvim'
+fi
+
+# --- Navigation ---
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../../'
+alias .....='cd ../../../../'
+alias -- -='cd -'
+
+# Project Shortcuts
+alias cdpr='cd ~/projects'
+alias cdnote='cd ~/projects/notes'
+alias cdlab='cd ~/projects/homelab'
+alias cddot='cd ~/projects/dotfiles'
+alias cdsc='cd ~/projects/scripts'
+
+# --- System info ---
+alias today='date +%d-%m-%Y'
+alias ports='ss -tulpn'
+alias iip="hostname -I | awk '{print \$1}'"
+alias myip='curl ifconfig.me'
+alias free='free -m'
+alias df='df -h'
+alias cpu='top -o %CPU'
+
+# --- Git ---
+alias gs='git status'
+alias ga='git add'
+alias gc='git commit -m'
+alias gca='git commit --amend'
+alias gp='git push'
+alias gl='git log --oneline --graph --decorate'
+alias gd='git diff'
+alias gco='git checkout'
+alias gundo='git reset --soft HEAD~1'
+alias gunstage='git reset HEAD --'
+
+# --- Docker ---
+alias d='docker'
+alias dc='docker compose'
+alias up='docker compose up -d'
+alias down='docker compose down'
+alias dps='docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"'
+alias dimg='docker images'
+
+# --- Common commands ---
+alias h='history'
+if command -v fzf >/dev/null 2>&1; then
+    alias hgrep='history | fzf'
+else
+    alias hgrep='history | grep'
+fi
+alias j='jobs -l'
+alias path='echo -e ${PATH//:/\\n}'
+alias reload='source ~/.bashrc'
+alias chx='chmod +x'
+
+# --- File operations (safer with -i) ---
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+
+# --- App Shortcuts ---
+alias t='tmux'
+alias o='opencode'
+alias c='copilot'
+alias chez='chezmoi'
+alias s='ddgr'
+
+# --- DevOps ---
+alias ans='ansible'
+alias tf='terraform'
+alias k='kubectl'

@@ -1,0 +1,19 @@
+---
+# Common packages shared across all distros
+common_packages:
+  - curl
+  - git
+  - xclip
+  - wl-clipboard
+  - unzip
+  - nmap
+  - w3m
+
+# Distro-specific packages (concatenated with common)
+debian_packages: "{{ common_packages + ['build-essential', 'ca-certificates', 'gnupg', 'software-properties-common', 'xz-utils', 'netcat-openbsd'] }}"
+
+fedora_packages: "{{ common_packages + ['@development-tools', 'xz', 'nmap-ncat'] }}"
+
+arch_packages: "{{ common_packages + ['base-devel', 'xz', 'openbsd-netcat'] }}"
+
+suse_packages: "{{ common_packages + ['patterns-devel-base-devel', 'xz', 'netcat'] }}"

@@ -1,0 +1,16 @@
+---
+# System Configuration Playbook
+# Runs roles in dependency order: common -> nvtop -> docker
+
+- name: System Configuration
+  hosts: localhost
+  connection: local
+  become: true
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    # target_user is passed via --extra-vars from chezmoi
+
+  roles:
+    - role: common
+    - role: nvtop
+    - role: docker

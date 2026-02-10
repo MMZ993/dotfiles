@@ -1,0 +1,53 @@
+# Simple single-line prompt with directory, git info, and tools
+format = "$hostname$username$python$directory$git_branch$git_status$character"
+
+# Configure directory display
+[directory]
+style = "blue"
+truncation_length = 3
+truncate_to_repo = true
+
+# Configure git branch display
+[git_branch]
+format = "[$symbol$branch]($style) "
+style = "green"
+symbol = "git:"
+
+# Configure git status display
+[git_status]
+format = '([$all_status$ahead_behind]($style) )'
+style = "red"
+ahead = "⇡"
+behind = "⇣"
+diverged = "⇕"
+modified = "!"
+staged = "+"
+untracked = "?"
+
+# Configure prompt character
+[character]
+success_symbol = "[\\$](green)"
+error_symbol = "[\\$](red)"
+
+# Show DEV indicator only when connected via SSH
+[hostname]
+ssh_only = true
+format = "[DEV]($style) "
+style = "cyan"
+
+# Show username for root or users other than default
+[username]
+show_always = false
+format = "[$user]($style) "
+style_user = "cyan"
+style_root = "red"
+disabled = false
+
+# Show Python virtual environment indicator
+[python]
+format = "[$symbol]($style) "
+symbol = "(v)"
+detect_extensions = []
+detect_files = ['.python-version']
+style = "yellow"
+

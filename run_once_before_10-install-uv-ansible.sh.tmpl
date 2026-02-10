@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Exit on error
+set -e
+
+# Ensure ~/.local/bin exists and is in PATH
+mkdir -p "$HOME/.local/bin"
+export PATH="$HOME/.local/bin:$PATH"
+
+# Install uv if not present
+if ! command -v uv >/dev/null 2>&1; then
+    echo "Installing uv..."
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+else
+    echo "uv is already installed."
+fi
+
+# Install Ansible via uv if not present
+if ! command -v ansible >/dev/null 2>&1; then
+    echo "Installing Ansible via uv..."
+    uv tool install ansible-core --with ansible
+else
+    echo "Ansible is already installed."
+fi

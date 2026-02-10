@@ -1,0 +1,149 @@
+# File operations
+mkcd() {
+    mkdir -p "$1" && cd "$1"
+}
+
+unpack() {
+    if [ -f "$1" ]; then
+        case "$1" in
+            *.tar.bz2) tar xjf "$1" ;;
+            *.tar.gz) tar xzf "$1" ;;
+            *.tar.xz) tar xJf "$1" ;;
+            *.bz2) bunzip2 "$1" ;;
+            *.rar) unrar x "$1" ;;
+            *.gz) gunzip "$1" ;;
+            *.tar) tar xf "$1" ;;
+            *.tbz2) tar xjf "$1" ;;
+            *.tgz) tar xzf "$1" ;;
+            *.zip) unzip "$1" ;;
+            *.Z) uncompress "$1" ;;
+            *.7z) 7z x "$1" ;;
+            *) echo "'$1' cannot be extracted via unpack()" ;;
+        esac
+    else
+        echo "'$1' is not a valid file"
+    fi
+}
+
+bck() {
+    cp "$1" "$1.backup"
+}
+
+# Find files
+ff() {
+    if command -v fd >/dev/null 2>&1; then
+        fd -t f "$1"
+    else
+        find . -type f -iname "*$1*"
+    fi
+}
+
+# Find directories
+fdir() {
+    if command -v fd >/dev/null 2>&1; then
+        fd -t d "$1"
+    else
+        find . -type d -iname "*$1*"
+    fi
+}
+
+# Recursive grep
+grepd() {
+    if command -v rg >/dev/null 2>&1; then
+        rg "$1"
+    else
+        grep -r "$1" .
+    fi
+}
+
+# Quick search with line numbers and exclusions
+qfind() {
+    if command -v rg >/dev/null 2>&1; then
+        rg -n "$1" "${2:-.}"
+    else
+        grep -rnE "$1" "${2:-.}" --exclude-dir={.git,node_modules,venv,dist,build}
+    fi
+}
+
+# Directory operations
+duh() {
+    du -h --max-depth=1 "$@" | sort -hr
+}
+
+cl() {
+    local dir="$1"
+    cd "${dir:-$HOME}" && ls
+}
+
+# Process management
+proc() {
+    local name="$1"
+    local kill_flag="$2"
+
+    if [[ -z "$name" ]]; then
+        echo "Usage: proc <name> [-k]"
+        return 1
+    fi
+
+    local pids
+    pids=$(pgrep -if "$name" | grep -v "$$")
+
+    if [[ -z "$pids" ]]; then
+        echo "No processes found matching '$name'"
+        return 1
+    fi
+
+    local count
+    count=$(echo "$pids" | wc -l)
+    echo "Found $count process(es):"
+    ps -p $pids -o pid,user,%cpu,%mem,command | sed 's/^/  /'
+
+    if [[ "$kill_flag" == "-k" ]]; then
+        echo ""
+        echo "Sending SIGKILL to PIDs: $(echo $pids | tr '\n' ' ')"
+        kill -9 $pids
+        echo "Terminated."
+    fi
+}
+
+# Create a data URL from a file
+dataurl() {
+    local mime
+    mime=$(file -b --mime-type "$1")
+    echo "data:$mime;base64,$(base64 -w 0 "$1")"
+}
+
+# Quick notes
+note() {
+    local note_dir="$HOME/projects/notes/fleeting"
+    mkdir -p "$note_dir"
+
+    if [[ -z "$1" ]]; then
+        # No name provided, use timestamp: DD-MM-YYYY_HHMM.md
+        local filename
+        filename=$(date +%d-%m-%Y_%H%M.md)
+        ${EDITOR:-vi} "$note_dir/$filename"
+    else
+        # Name provided, ensure .md extension
+        local filename="$1"
+        [[ "$filename" != *.md ]] && filename="$filename.md"
+        ${EDITOR:-vi} "$note_dir/$filename"
+    fi
+}
+
+# llm wrapper for easier use
+ai() {
+    # 1. Set the default model (uses LLM_MODEL env var, or defaults to gpt-4o-mini)
+    local model="${LLM_MODEL:-gpt-4o-mini}"
+
+    # 2. Check if there is data being piped in (stdin)
+    if [ ! -t 0 ]; then
+        # Case 2: Piped input
+        # We take all arguments ($*) as the system prompt and read stdin as the main prompt
+        llm -m "$model" -s "$*"
+    else
+        # Case 1: Direct call
+        # We combine all arguments ($*) into a single string
+        llm -m "$model" "$*"
+    fi
+}

@@ -1,0 +1,40 @@
+---
+# NVTop for NVIDIA GPU monitoring
+
+- name: Check for NVIDIA GPU
+  ansible.builtin.stat:
+    path: /proc/driver/nvidia/version
+  register: nvidia_check
+  changed_when: false
+
+- name: Install nvtop (Debian/Ubuntu)
+  apt:
+    name: "{{ nvtop_package }}"
+    state: present
+  when:
+    - nvidia_check.stat.exists
+    - ansible_facts['os_family'] == "Debian"
+
+- name: Install nvtop (Fedora/Nobara/RHEL/AlmaLinux/Rocky Linux)
+  dnf:
+    name: "{{ nvtop_package }}"
+    state: present
+  when:
+    - nvidia_check.stat.exists
+    - ansible_facts['distribution'] in ["Fedora", "Nobara", "RedHat", "AlmaLinux", "Rocky"]
+
+- name: Install nvtop (Arch)
+  pacman:
+    name: "{{ nvtop_package }}"
+    state: present
+  when:
+    - nvidia_check.stat.exists
+    - ansible_facts['os_family'] == "Archlinux"
+
+- name: Install nvtop (openSUSE)
+  zypper:
+    name: "{{ nvtop_package }}"
+    state: present
+  when:
+    - nvidia_check.stat.exists
+    - ansible_facts['os_family'] == "Suse"

@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# Exit on error
+set -e
+
+{{- if eq .chezmoi.os "linux" }}
+  # Define packages to install
+  PACKAGES="curl git python3"
+
+  # Function to check if a command exists
+  exists() {
+    command -v "$1" >/dev/null 2>&1
+  }
+
+  # Check if we need to install anything
+  NEEDS_INSTALL=false
+  for pkg in $PACKAGES; do
+    if ! exists "$pkg"; then
+      NEEDS_INSTALL=true
+      break
+    fi
+  done
+
+  if [ "$NEEDS_INSTALL" = true ]; then
+    echo "Installing system packages: $PACKAGES"
+    
+    {{- if or (eq .chezmoi.osRelease.id "ubuntu" "debian" "pop" "linuxmint") (contains "debian" .chezmoi.osRelease.idLike) }}
+      sudo apt-get update
+      sudo apt-get install -y $PACKAGES
+    {{- else if or (eq .chezmoi.osRelease.id "fedora" "nobara" "rhel") (contains "fedora" "rhel" .chezmoi.osRelease.idLike) }}
+      sudo dnf install -y $PACKAGES
+    {{- else if or (eq .chezmoi.osRelease.id "arch" "manjaro") (contains "arch" .chezmoi.osRelease.idLike) }}
+      sudo pacman -S --noconfirm --needed $PACKAGES
+    {{- else if or (eq .chezmoi.osRelease.id "opensuse" "opensuse-tumbleweed") (contains "suse" .chezmoi.osRelease.idLike) }}
+      sudo zypper install -y $PACKAGES
+    {{- else }}
+      echo "Unsupported distribution: {{ .chezmoi.osRelease.id }}"
+      exit 1
+    {{- end }}
+  else
+    echo "System packages already installed."
+  fi
+{{- end }}

@@ -1,0 +1,25 @@
+[user]
+	email = {{ .email | quote }}
+	name = {{ .name | quote }}
+[core]
+	excludesfile = ~/.gitignore_global
+[pull]
+	rebase = true
+[rebase]
+	autoStash = true
+[init]
+	defaultBranch = main
+[column]
+	ui = auto
+[branch]
+	sort = -committerdate
+[help]
+	autocorrect = prompt
+[alias]
+	st = status
+	co = checkout
+	ci = commit
+	br = branch
+	df = diff
+	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+	last = log -1 HEAD

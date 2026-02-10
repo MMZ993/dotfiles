@@ -1,0 +1,119 @@
+---
+# Docker installation and configuration
+
+# --- Fedora/Nobara ---
+
+- name: Add Docker repo (Fedora/Nobara)
+  ansible.builtin.yum_repository:
+    name: docker
+    description: Docker repo
+    baseurl: "https://download.docker.com/linux/fedora/{{ ansible_facts['distribution_major_version'] }}/{{ ansible_facts['architecture'] }}/stable"
+    gpgkey: "https://download.docker.com/linux/fedora/gpg"
+    gpgcheck: true
+    enabled: true
+  when: ansible_facts['distribution'] in ["Fedora", "Nobara"]
+
+- name: Install Docker (Fedora/Nobara)
+  dnf:
+    name: "{{ docker_packages }}"
+    state: present
+  when: ansible_facts['distribution'] in ["Fedora", "Nobara"]
+
+# --- RHEL-based (AlmaLinux/Rocky) ---
+
+- name: Add Docker repo (RHEL-based)
+  ansible.builtin.yum_repository:
+    name: docker-ce-stable
+    description: Docker CE Stable - $basearch
+    baseurl: "https://download.docker.com/linux/rhel/{{ ansible_facts['distribution_major_version'] }}/{{ ansible_facts['architecture'] }}/stable"
+    gpgkey: "https://download.docker.com/linux/rhel/gpg"
+    gpgcheck: true
+    enabled: true
+  when: ansible_facts['os_family'] == "RedHat" and ansible_facts['distribution'] in ["RedHat", "AlmaLinux", "Rocky"]
+
+- name: Install Docker (RHEL-based)
+  dnf:
+    name: "{{ docker_packages }}"
+    state: present
+  when: ansible_facts['os_family'] == "RedHat" and ansible_facts['distribution'] in ["RedHat", "AlmaLinux", "Rocky"]
+
+# --- Debian/Ubuntu ---
+
+- name: Create directory for Docker GPG key
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: Download Docker GPG key (Debian/Ubuntu)
+  ansible.builtin.get_url:
+    url: "https://download.docker.com/linux/{{ ansible_facts['distribution'] | lower }}/gpg"
+    dest: "/etc/apt/keyrings/docker.asc"
+    mode: '0644'
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: Add Docker repo (Debian/Ubuntu)
+  ansible.builtin.apt_repository:
+    repo: "deb [arch={{ ansible_facts['architecture'] | replace('x86_64', 'amd64') }} signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/{{ ansible_facts['distribution'] | lower }} {{ ansible_facts['distribution_release'] }} stable"
+    state: present
+    update_cache: yes
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: Install Docker (Debian/Ubuntu)
+  apt:
+    name: "{{ docker_packages }}"
+    state: present
+    update_cache: yes
+  when: ansible_facts['os_family'] == "Debian"
+
+# --- Arch ---
+
+- name: Install Docker (Arch)
+  pacman:
+    name: "{{ arch_docker_packages }}"
+    state: present
+    update_cache: yes
+  when: ansible_facts['os_family'] == "Archlinux"
+
+# --- openSUSE ---
+
+- name: Add Docker repo (openSUSE)
+  ansible.builtin.zypper_repository:
+    name: containers
+    repo: "https://download.opensuse.org/repositories/Virtualization:containers/openSUSE_{{ ansible_facts['distribution_version'] }}/"
+    state: present
+    priority: 100
+  when: ansible_facts['os_family'] == "Suse"
+
+- name: Refresh zypper repos (openSUSE)
+  ansible.builtin.command: zypper refresh
+  changed_when: false
+  when: ansible_facts['os_family'] == "Suse"
+
+- name: Install Docker (openSUSE)
+  zypper:
+    name: "{{ docker_packages }}"
+    state: present
+  when: ansible_facts['os_family'] == "Suse"
+
+# --- Finalize ---
+
+- name: Ensure Docker group exists
+  group:
+    name: docker
+    state: present
+
+- name: Add user to docker group
+  user:
+    name: "{{ target_user }}"
+    groups: docker
+    append: true
+  when: target_user is defined and target_user != ""
+
+- name: Enable and start Docker service
+  service:
+    name: docker
+    enabled: true
+    state: started
+  when: ansible_facts['os_family'] in ["Debian", "RedHat", "Fedora", "Nobara", "Archlinux", "Suse"]

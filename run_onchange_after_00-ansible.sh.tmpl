@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# ansible hash: {{ include "ansible/ansible.cfg" | sha256sum }}-{{ include "ansible/site.yml" | sha256sum }}-{{ include "ansible/roles/common/tasks/main.yml" | sha256sum }}-{{ include "ansible/roles/common/vars/main.yml" | sha256sum }}-{{ include "ansible/roles/docker/tasks/main.yml" | sha256sum }}-{{ include "ansible/roles/docker/vars/main.yml" | sha256sum }}-{{ include "ansible/roles/nvtop/tasks/main.yml" | sha256sum }}-{{ include "ansible/roles/nvtop/vars/main.yml" | sha256sum }}
+
+# Exit on error
+set -e
+
+# Ensure ~/.local/bin is in PATH (where uv installs ansible)
+export PATH="$HOME/.local/bin:$PATH"
+
+# Ansible directory from chezmoi source
+ANSIBLE_DIR="{{ .chezmoi.sourceDir }}/ansible"
+
+if command -v ansible-playbook >/dev/null 2>&1; then
+    echo "Running Ansible playbook..."
+
+    # Change to ansible directory to pick up ansible.cfg
+    cd "$ANSIBLE_DIR" || exit 1
+
+    # We pass the username as an extra-var to keep the YAML static and valid
+    ansible-playbook -i localhost, site.yml \
+        -K -v \
+        -e "target_user={{ .chezmoi.username }}"
+else
+    echo "Ansible not found. Skipping system configuration."
+fi

@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# config.toml hash: {{ include "dot_config/mise/config.toml.tmpl" | sha256sum }}
+
+# Exit on error
+set -e
+
+# Ensure mise is in the PATH for this script
+export PATH="$HOME/.local/bin:$PATH"
+
+if command -v mise >/dev/null 2>&1; then
+    echo "Installing/Updating tools defined in mise config..."
+    # --yes skips confirmation prompts
+    mise install --yes
+else
+    echo "Mise not found. Skipping tool installation."
+fi

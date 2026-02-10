@@ -1,0 +1,13 @@
+---
+# Docker packages (same across distros)
+docker_packages:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-buildx-plugin
+  - docker-compose-plugin
+
+# Arch-specific packages (uses different naming)
+arch_docker_packages:
+  - docker
+  - docker-compose

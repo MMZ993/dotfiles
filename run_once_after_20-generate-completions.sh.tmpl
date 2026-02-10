@@ -1,0 +1,20 @@
+#!/bin/bash
+
+mkdir -p "$HOME/.bash_completion.d"
+
+for tool in chezmoi kubectl docker; do
+    if command -v "$tool" >/dev/null 2>&1; then
+        echo "Generating completions for $tool..."
+        if "$tool" completion bash > "$HOME/.bash_completion.d/$tool" 2>/dev/null; then
+            echo "Successfully generated completions for $tool"
+        else
+            echo "Warning: Failed to generate completions for $tool"
+            rm -f "$HOME/.bash_completion.d/$tool"
+        fi
+    fi
+done
+
+# Terraform completions are handled by chezmoi template (.bash_completion.d/terraform)
+
+echo "Completions generated."
+exit 0
