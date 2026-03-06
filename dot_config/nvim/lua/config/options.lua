@@ -7,3 +7,5 @@ vim.opt.relativenumber = false
 vim.opt.scrolloff = 8 -- Keep 8 lines of context
 vim.opt.sidescrolloff = 8 -- Keep 8 columns of context
 vim.opt.spell = true -- Enable spell check
+
+vim.g.autoformat = false -- Disable autoformat on save, format manually with :Format or <leader>cf
