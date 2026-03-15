@@ -109,6 +109,9 @@ installed_software:
         version: latest
         install_via: npm
         note: Used by neovim conform.nvim for formatting
+      - name: mcporter
+        version: latest
+        install_via: npm
     monitoring:
       - name: btop
         version: latest
@@ -271,7 +274,7 @@ bashrc:
     HISTTIMEFORMAT: "%F %T "
     FZF_DEFAULT_OPTS: TokyoNight color scheme
     LS_COLORS: TokyoNight theme (via vivid or fallback)
-    PATH: "$HOME/.local/bin", "$HOME/bin", "$HOME/.opencode/bin"
+    PATH: "$HOME/.local/bin", "$HOME/.local/cli/bin", "$HOME/bin", "$HOME/.opencode/bin"
 
   shell_options:
     - cdspell
