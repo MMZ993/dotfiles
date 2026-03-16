@@ -10,6 +10,8 @@ export PATH="$HOME/.local/bin:$PATH"
 
 if command -v mise >/dev/null 2>&1; then
     echo "Installing/Updating tools defined in mise config..."
+    # Prevent aidex from injecting into AI client configs during npm install
+    export AIDEX_NO_SETUP=1
     # --yes skips confirmation prompts
     mise install --yes
 else
