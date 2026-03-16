@@ -14,3 +14,10 @@ When user asks to "install" something, they mean:
 - **NEVER** run `chezmoi apply` or `chezmoi edit` commands
 - Always ask user to run `chezmoi apply` themselves after making config changes
 - This project uses chezmoi for dotfile management
+
+## Documentation Updates
+
+When editing configuration files that change the installed software or system setup, **ALWAYS** update SETUP.md to keep it in sync:
+- Add new tools/packages to the appropriate sections
+- Update installation order if adding new installation steps
+- Keep mise_tools, ansible_system_packages, chezmoi_scripts, etc. aligned with actual configs

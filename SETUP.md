@@ -6,6 +6,7 @@ installed_software:
     - uv via curl script
     - ansible via uv (needs python3 from step 1)
     - mise via curl script
+    - gh via curl script
     - ansible_system_packages (docker, nvtop, etc.) via ansible playbook
     - mise_tools via mise install
 
@@ -24,6 +25,8 @@ installed_software:
       purpose: Runs system configuration playbooks
     - name: mise
       install: curl https://mise.run | sh
+    - name: gh
+      install: curl script to install GitHub CLI from releases
 
   # Via ansible playbooks (run after ansible is installed)
   ansible_system_packages:
@@ -72,6 +75,8 @@ installed_software:
         version: lts
       - name: bun
         version: latest
+      - name: go
+        version: latest
       - name: neovim
         version: latest
       - name: tmux
@@ -80,6 +85,10 @@ installed_software:
         version: latest
       - name: vivid
         version: latest
+      - name: prettier
+        version: latest
+        install_via: npm
+        note: Used by neovim conform.nvim for formatting
     cli_tools:
       - name: eza
         version: latest
@@ -107,11 +116,20 @@ installed_software:
       - name: ddgr
         version: latest
         install_via: pipx
-      - name: prettier
+      - name: mcporter
         version: latest
         install_via: npm
-        note: Used by neovim conform.nvim for formatting
-      - name: mcporter
+    coding_agents_utils:
+      - name: @beads/bd
+        version: latest
+        install_via: npm
+      - name: aidex-mcp
+        version: latest
+        install_via: npm
+      - name: ctx7
+        version: latest
+        install_via: npm
+      - name: firecrawl-cli
         version: latest
         install_via: npm
     monitoring:
@@ -218,6 +236,7 @@ configs:
       truncation_length: 3
       truncate_to_repo: true
     git_branch:
+      format: "[$symbol$branch]($style) "
       style: green
       symbol: git:
     git_status:
@@ -277,6 +296,8 @@ bashrc:
     FZF_DEFAULT_OPTS: TokyoNight color scheme
     LS_COLORS: TokyoNight theme (via vivid or fallback)
     PATH: "$HOME/.local/bin", "$HOME/.local/cli/bin", "$HOME/bin", "$HOME/.opencode/bin"
+    BROWSER: w3m (if available)
+    LESS_TERMCAP_* variables for man page colors
 
   shell_options:
     - cdspell
