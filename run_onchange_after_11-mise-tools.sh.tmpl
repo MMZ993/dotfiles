@@ -1,0 +1,85 @@
+#!/bin/bash
+
+# Exit on error
+set -e
+
+# Ensure mise and local bins are in PATH
+export PATH="$HOME/.local/bin:$HOME/.local/cli/bin:$PATH"
+
+# Create CLI bin directory
+mkdir -p "$HOME/.local/cli/bin"
+
+# Function to check if a command exists
+exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+# Generate aidex-cli using mcporter
+if exists mcporter && exists npx; then
+    if ! exists aidex-cli; then
+        echo "Generating aidex-cli using mcporter..."
+        TMP_DIR=$(mktemp -d)
+        cd "$TMP_DIR"
+        mcporter generate-cli "npx -y aidex-mcp@latest" --name aidex-cli --compile
+        if [ -f "aidex-cli" ]; then
+            mv aidex-cli "$HOME/.local/cli/bin/"
+        else
+            echo "Error: aidex-cli binary not found after generation"
+            exit 1
+        fi
+        rm -rf "$TMP_DIR"
+        echo "aidex-cli installed successfully."
+    else
+        echo "aidex-cli already exists."
+    fi
+else
+    echo "mcporter or npx not found. Skipping aidex-cli generation."
+fi
+
+# Install codebase-memory-mcp
+if ! exists cbm; then
+    echo "Installing codebase-memory-mcp..."
+    ARCH=$(uname -m)
+    case $ARCH in
+        x86_64)  ARCH="amd64" ;;
+        aarch64) ARCH="arm64" ;;
+        *)       echo "Unsupported architecture: $ARCH"; exit 1 ;;
+    esac
+    
+    TMP_DIR=$(mktemp -d)
+    cd "$TMP_DIR"
+    wget -q https://github.com/DeusData/codebase-memory-mcp/releases/latest/download/codebase-memory-mcp-linux-${ARCH}.tar.gz -O cbm.tar.gz
+    tar xzf cbm.tar.gz
+    mv codebase-memory-mcp "$HOME/.local/cli/bin/cbm"
+    rm -rf "$TMP_DIR"
+    echo "codebase-memory-mcp installed successfully."
+else
+    echo "codebase-memory-mcp already exists."
+fi
+
+# Generate searxng CLI using mcporter
+if exists mcporter && exists npx; then
+    if ! exists searxng; then
+        echo "Generating searxng CLI using mcporter..."
+        TMP_DIR=$(mktemp -d)
+        cd "$TMP_DIR"
+        SEARXNG_URL=https://searxng.mmz.sh mcporter generate-cli "npx -y mcp-searxng@latest" --name searxng --compile
+        if [ -f "searxng" ]; then
+            mv searxng "$HOME/.local/cli/bin/"
+        fi
+        rm -rf "$TMP_DIR"
+        echo "searxng CLI installed successfully."
+    else
+        echo "searxng CLI already exists."
+    fi
+else
+    echo "mcporter or npx not found. Skipping searxng CLI generation."
+fi
+
+# Configure firecrawl
+if exists firecrawl; then
+    echo "Configuring firecrawl API URL..."
+    firecrawl config --api-url https://firecrawl.mmz.sh
+else
+    echo "firecrawl not found. Skipping configuration."
+fi

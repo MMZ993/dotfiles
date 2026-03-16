@@ -70,6 +70,8 @@ installed_software:
         version: latest
       - name: node
         version: lts
+      - name: bun
+        version: latest
       - name: neovim
         version: latest
       - name: tmux

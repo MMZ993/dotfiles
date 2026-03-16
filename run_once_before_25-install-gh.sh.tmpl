@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# Exit on error
+set -e
+
+# Ensure ~/.local/bin exists and is in PATH
+mkdir -p "$HOME/.local/bin"
+export PATH="$HOME/.local/bin:$PATH"
+
+if ! command -v gh >/dev/null 2>&1; then
+    echo "Installing GitHub CLI..."
+    
+    # Determine architecture
+    ARCH=$(uname -m)
+    case $ARCH in
+        x86_64)  ARCH="amd64" ;;
+        aarch64) ARCH="arm64" ;;
+        armv7l)  ARCH="arm" ;;
+        *)       echo "Unsupported architecture: $ARCH"; exit 1 ;;
+    esac
+    
+    # Get latest version
+    LATEST=$(curl -s https://api.github.com/repos/cli/cli/releases/latest | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
+    VERSION=${LATEST#v}
+    
+    # Download and extract
+    DOWNLOAD_URL="https://github.com/cli/cli/releases/download/${LATEST}/gh_${VERSION}_linux_${ARCH}.tar.gz"
+    TMP_DIR=$(mktemp -d)
+    
+    curl -sSL "$DOWNLOAD_URL" -o "$TMP_DIR/gh.tar.gz"
+    tar -xzf "$TMP_DIR/gh.tar.gz" -C "$TMP_DIR"
+    mv "$TMP_DIR/gh_${VERSION}_linux_${ARCH}/bin/gh" "$HOME/.local/bin/gh"
+    
+    rm -rf "$TMP_DIR"
+    
+    echo "GitHub CLI installed successfully (version ${VERSION})."
+else
+    echo "GitHub CLI is already installed."
+fi
