@@ -23,9 +23,9 @@ iteration 4: complete
 
 Rules:
 - One line per iteration, always
-- Status is exactly one of: `success`, `failed`, `complete` (note that "complete" indicate WHOLE project finished, not only this iteration, never write complete if You are not 100% sure about it, just let next iteration handle it)
+- Status is exactly one of: `success`, `failed`, `complete`. `complete` indicates the WHOLE project is finished, not just this iteration — never write it unless you are 100% certain. If in doubt, write `success` and let the next iteration handle the final check.
 - `failed` must be followed by ` - ` and a single-line reason (no newlines)
-- Never modify or delete previous lines — append only (except of last line in terms of previous iteration checks failed - see step 2)
+- Append only — never modify or delete previous lines. Exception: when Step 2 downgrades the previous iteration, overwrite only the last line.
 - Writing this line is your **absolute last action** before stopping
 - If RALPH.md does not exist yet, create it
 
@@ -55,7 +55,7 @@ Run all of the following checks regardless of what the previous status claims:
 4. **PLAN.md** — read `.agents/PLAN.md`. Every task must be `[x]`. If unchecked tasks remain, validation fails.
 5. **Beads** — run `bd task list`. No tasks should be `in-progress`. Open tasks are new work, not a failure.
 
-**If all 5 checks pass:** previous iteration was genuinely successful..
+**If all 5 checks pass:** the previous iteration was genuinely successful.
 
 **If any check fails:** downgrade the previous iteration in RALPH.md — overwrite the last line changing `success` to `failed - <what failed>`. Then proceed to the Recovery Fork below.
 
@@ -73,15 +73,15 @@ Attempt a targeted fix:
 - Do not redo everything — focus on what the HANDOFF says went wrong
 - If tests were failing: diagnose with the `debugging` skill, fix, then invoke the `verify` skill
 - If git was dirty: stage and commit what was left, or revert if the changes are wrong
-- If PLAN.md had unchecked tasks: complete them following the normal TDD loop (Step 5)
+- If PLAN.md had unchecked tasks: complete them following the normal TDD loop (Step 6)
 
 After the fix, re-run all 5 validation checks from Step 2.
 
-If recovery succeeds: proceed to Step 4 (plan next work) as a normal iteration.
+If recovery succeeds: proceed to Step 4 (plan) as a normal iteration.
 
 If recovery fails:
-- Write a detailed `.agents/HANDOFF.md` (see Step 7 — Failure variant)
-- Write RALPH.md: `iteration N: failed - recovery unsuccessful, <what was tried>`
+- Write a detailed `.agents/HANDOFF.md` (see Step 8 — Failure variant)
+- Write RALPH.md: `iteration N: failed - recovery unsuccessful - <what was tried>`
 - Stop.
 
 ---
@@ -92,20 +92,7 @@ Proceed to Step 4.
 
 ---
 
-# Step 4 — Check Completion
-
-Run `bd task list`. If there are **no open or in-progress tasks** and PLAN.md (if it exists) has all tasks checked off:
-
-- Write `.agents/HANDOFF.md` with a completion summary
-- Write RALPH.md: `iteration N: complete - all tasks done`
-- Write 'complete' to `.agents/RALPH.md` ONLY in case this iteration You didnt wrote any new code, all tests passed, and there is no new items to implement from PRD.md file. If You did any code changes wrote `success`
-- Stop. The project is finished.
-
-If open tasks remain, continue to Step 5.
-
----
-
-# Step 5 — Plan
+# Step 4 — Plan
 
 Read current open Beads tasks: `bd task list`. Cross-reference with `.agents/PRD.md` requirements and `.agents/HANDOFF.md` carry-over.
 
@@ -116,7 +103,9 @@ Sync Beads:
 - For new tasks not yet in Beads: `bd task create "<description>" --epic <id>`
 - For tasks being picked up: `bd task update <id> --status in-progress`
 
-Write `.agents/PLAN.md`:
+**If there is nothing to plan** — no open Beads tasks, no unimplemented requirements in PRD.md, no carry-over from HANDOFF — proceed to Step 5 (Completion Check). Do not write a PLAN.md.
+
+Otherwise, write `.agents/PLAN.md`:
 
 ```markdown
 # Session Plan — <date> — Iteration <N>
@@ -131,11 +120,33 @@ Write `.agents/PLAN.md`:
 <Constraints, decisions, carry-over context>
 ```
 
-No confirmation needed. Proceed immediately.
+No confirmation needed. Proceed immediately to Step 6.
+
+---
+
+# Step 5 — Completion Check
+
+You are here because planning found nothing left to do. Verify this is genuinely true before declaring the project finished.
+
+Run all checks:
+1. **Tests** — full suite must pass
+2. **Lint** — must pass clean
+3. **Git state** — `git status` must be clean
+4. **PRD.md** — re-read all requirements. Confirm each one is implemented. If anything is missing, go back to Step 4 and plan it.
+5. **Beads** — `bd task list` — no open or in-progress tasks
+
+If all pass:
+- Write `.agents/HANDOFF.md` with a completion summary
+- Write RALPH.md: `iteration N: complete`
+- Stop. The project is finished.
+
+If any check fails: do not write `complete`. Go back to Step 4, plan the remaining work, and continue to Step 6.
 
 ---
 
 # Step 6 — Execute (TDD Loop)
+
+*(Only reached if Step 4 produced a PLAN.md with tasks.)*
 
 Work through every task in PLAN.md. Do not skip steps. Do not move to the next task until the current one is verified.
 
@@ -151,7 +162,7 @@ Run it. Confirm it fails for the right reason before writing any implementation.
 Minimum code to make the test pass. Follow `.agents/RULES.md`.
 
 **3. Verify — invoke `verify` skill**
-Full suite + lint must pass. If it fails, invoke the `debugging` skill. Identify root cause before changing anything. After fixing, return to verify. If root cause cannot be identified after thorough debugging: skip to Step 7 (Failure variant) — do not guess and commit broken code.
+Full suite + lint must pass. If it fails, invoke the `debugging` skill. Identify root cause before changing anything. After fixing, return to verify. If root cause cannot be identified after thorough debugging: skip to Step 8 (Failure variant) — do not guess and commit broken code.
 
 **4. Update tracking**
 - Check off in PLAN.md: `- [x]`
@@ -161,15 +172,21 @@ Full suite + lint must pass. If it fails, invoke the `debugging` skill. Identify
 
 ### When all tasks are checked off:
 
-**5. Request code review — invoke `request-review` skill, then call `code-reviewer` agent**
+Proceed to Step 7.
+
+---
+
+# Step 7 — Request Review and Commit
+
+**Request code review — invoke `request-review` skill, then call `code-reviewer` agent**
 Act on feedback: fix critical and important issues, re-verify after each fix. Note minor issues in HANDOFF.md.
 
-**6. Commit — invoke `commit` skill**
+**Commit — invoke `commit` skill**
 Autonomous mode — no confirmation step. You are a judge, there is no user. Stage specific files, commit with the planned message, verify with `git log`.
 
 ---
 
-# Step 7 — Write HANDOFF.md
+# Step 8 — Write HANDOFF.md
 
 ### On success:
 
@@ -214,15 +231,17 @@ Write more detail — the next iteration's recovery depends on this:
 
 ---
 
-# Step 8 — Write RALPH.md (last action)
+# Step 9 — Write RALPH.md (last action)
 
 This is your final action. Do not do anything after this.
 
 - **Success:** `iteration N: success`
 - **Failure:** `iteration N: failed - <one line reason>`
-- **Complete:** `iteration N: complete - all tasks done`
+- **Complete:** `iteration N: complete`
 
 Append to `.agents/RALPH.md`. Never modify previous lines.
 
-**After writing to RALPH.md You can return any text - it will be passed to next loop iteration - but You should use Handoff file for structured data handling between sessions**
-**If You are sure the FILL project is completed, and You wrote `complete` to RALPH.md then You can output only "COMPLETE" as a text - loop iterations will be stopped**
+After writing to RALPH.md you may return a short text summary — it will be visible in the loop output. Use HANDOFF.md for structured data passed between sessions.
+
+If you are sure the full project is completed and you wrote `complete` to RALPH.md, output only the word `COMPLETE` as your final text — the loop script uses this to stop.
+
