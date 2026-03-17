@@ -69,7 +69,7 @@ When all done:
 | Agent | Mode | Purpose |
 |---|---|---|
 | `build` | primary | Main coding agent. TDD, Serena navigation, reads project context on start |
-| `devops` | primary | Infrastructure and DevOps agent — Ansible, Terraform, Kubernetes, GitLab CI/CD, Linux, networking. Safety-first, no commands without explicit permission |
+| `devops` | primary | Infrastructure and DevOps agent — Ansible, Terraform, Kubernetes, GitLab CI/CD, Linux, networking. |
 | `ask` | primary | Quick Q&A — direct answers without burning build context |
 | `explore` | subagent | Read-only codebase exploration via AiDex and CBM. Use for finding files, tracing dependencies, understanding architecture |
 | `code-reviewer` | subagent | Fresh-context code review. Invoked via `request-review` skill after plan completion |

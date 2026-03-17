@@ -12,6 +12,10 @@ permission:
   write: allow
   webfetch: allow
   websearch: allow
+  codesearch: allow
+  todowrite: allow
+  compress: allow
+  apply_patch: allow
   skill:
     "*": deny
     find-docs: allow
