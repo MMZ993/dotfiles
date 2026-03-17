@@ -1,0 +1,23 @@
+name: opencode
+description: "CLI coding agent context for opencode. File ops, shell, edits handled natively. Only pure LSP semantic tools exposed."
+single_project: true
+
+fixed_tools:
+  - find_symbol
+  - find_referencing_symbols
+  - get_symbols_overview
+  - replace_symbol_body
+  - insert_after_symbol
+  - insert_before_symbol
+  - rename_symbol
+  - list_dir
+  - find_file
+  - search_for_pattern
+
+
+prompt: |
+  You are running in opencode, a CLI coding agent. File operations, line-based edits,
+  reads, and shell commands are handled by opencode's own tools.
+  Prioritize Serena's semantic tools for code navigation and editing.
+  For exploration, avoid reading entire files — use overview and symbolic search tools instead.
+  Before editing a file, read it fully to get complete context.
