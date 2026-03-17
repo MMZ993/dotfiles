@@ -40,6 +40,12 @@ All project context lives in `.agents/` at the repo root:
 /plan (reads HANDOFF.md automatically) → /dev
 ```
 
+**Quick fix or small isolated change:**
+```
+/quickfix → TDD loop → review → commit
+```
+No planning ritual, no beads tracking (unless a task ID is provided). Use when the change is too small to warrant a full session.
+
 ### The `/dev` loop
 
 ```
@@ -63,6 +69,7 @@ When all done:
 | Agent | Mode | Purpose |
 |---|---|---|
 | `build` | primary | Main coding agent. TDD, Serena navigation, reads project context on start |
+| `devops` | primary | Infrastructure and DevOps agent — Ansible, Terraform, Kubernetes, GitLab CI/CD, Linux, networking. Safety-first, no commands without explicit permission |
 | `ask` | primary | Quick Q&A — direct answers without burning build context |
 | `explore` | subagent | Read-only codebase exploration via AiDex and CBM. Use for finding files, tracing dependencies, understanding architecture |
 | `code-reviewer` | subagent | Fresh-context code review. Invoked via `request-review` skill after plan completion |
@@ -80,6 +87,7 @@ User-invoked slash commands. Not called autonomously by the agent.
 | `/survey-codebase` | Generates `.agents/RULES.md` from existing code — for cloned/existing projects |
 | `/plan` | Creates `.agents/PLAN.md` and syncs beads tasks for the session |
 | `/dev` | Executes the TDD loop through PLAN.md |
+| `/quickfix` | TDD loop for a single fix or small change — no planning ritual, no session wrapup |
 
 ---
 
