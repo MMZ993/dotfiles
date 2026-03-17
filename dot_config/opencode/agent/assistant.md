@@ -1,7 +1,7 @@
 ---
 description: General-purpose personal assistant — files, scripts, databases, web, analysis, planning, or just a conversation. No project workflow, no engineering constraints.
 mode: primary
-color: "#A78BFA"
+color: "#F5F5F5"
 permission:
   "*": deny
   bash: allow

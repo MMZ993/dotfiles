@@ -89,6 +89,7 @@ User-invoked slash commands. Not called autonomously by the agent.
 | `/plan` | Creates `.agents/PLAN.md` and syncs beads tasks for the session |
 | `/dev` | Executes the TDD loop through PLAN.md |
 | `/quickfix` | TDD loop for a single fix or small change — no planning ritual, no session wrapup |
+| `/ralph-loop` | Autonomous plan+dev iteration for unattended loops — validates previous session, executes TDD, writes HANDOFF and RALPH.md status |
 
 ---
 
