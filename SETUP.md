@@ -120,6 +120,10 @@ installed_software:
         version: latest
         install_via: npm
     coding_agents_utils:
+      - name: opencode
+        version: latest
+        install_via: curl
+        note: AI coding agent. Installs to ~/.opencode/bin. Config at dot_config/opencode/
       - name: @beads/bd
         version: latest
         install_via: npm
@@ -136,6 +140,14 @@ installed_software:
         version: latest
         install_via: npm
         note: Token usage tracker for AI coding assistants
+      - name: kimaki
+        version: latest
+        install_via: npm
+        note: Discord bot integration for opencode AI coding
+      - name: openportal
+        version: latest
+        install_via: npm
+        note: Mobile-first web UI for opencode (portal)
     monitoring:
       - name: btop
         version: latest
@@ -272,6 +284,22 @@ configs:
     print_width: 100
     ignore:
       - "*.md" (prettier breaks YAML frontmatter in markdown files)
+
+  opencode:
+    config: dot_config/opencode/opencode.jsonc
+    plugins:
+      - cc-safety-net (destructive command safety net)
+      - "@tarquinen/opencode-dcp" (dynamic context pruning for long sessions)
+    mcp_servers:
+      - cbm (codebase memory graph)
+      - aidex (file-level code index)
+      - serena (LSP-backed symbol navigation)
+    agents:
+      - build (primary coding agent, TDD workflow)
+      - ask (quick Q&A)
+      - explore (subagent, read-only codebase exploration)
+      - code-reviewer (subagent, post-plan review)
+    workflow_docs: dot_config/opencode/README.md
 
   neovim:
     base: LazyVim

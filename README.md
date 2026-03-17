@@ -20,6 +20,7 @@ chezmoi apply --source=~/projects/dotfiles
 - **chezmoi** - Dotfile management
 - **mise** - Dev tools versioning
 - **ansible** - System configuration
+- **opencode** - AI coding agent with custom agent workflow (see [`dot_config/opencode/README.md`](dot_config/opencode/README.md))
 
 ## Supported Distros
 

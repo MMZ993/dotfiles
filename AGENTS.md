@@ -19,6 +19,18 @@ When user asks to "install" something, they mean:
 
 - **Mise config**: `dot_config/mise/config.toml.tmpl`
 
+## OpenCode Workflow
+
+This repo ships a full opencode agent workflow in `dot_config/opencode/`. See [`dot_config/opencode/README.md`](dot_config/opencode/README.md) for:
+
+- Agents (`build`, `ask`, `explore`, `code-reviewer`) and their roles
+- Slash commands (`/brainstorm`, `/plan`, `/dev`, etc.)
+- Skills (`write-tests`, `verify`, `debugging`, `commit`, `session-wrapup`, etc.)
+- Required MCP servers (Serena, AiDex, CBM) and CLI tools (Beads, Context7)
+- Permissions model (all MCP denied globally, per-agent allowlists)
+
+---
+
 ## Documentation Updates
 
 When editing configuration files that change the installed software or system setup, **ALWAYS** update SETUP.md to keep it in sync:
