@@ -96,3 +96,6 @@ alias s='ddgr'
 alias ans='ansible'
 alias tf='terraform'
 alias k='kubectl'
+
+# --- Tool shortcuts ---
+alias ttop='tokscale'

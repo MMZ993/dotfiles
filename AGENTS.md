@@ -15,6 +15,10 @@ When user asks to "install" something, they mean:
 - Always ask user to run `chezmoi apply` themselves after making config changes
 - This project uses chezmoi for dotfile management
 
+## Configuration File Paths
+
+- **Mise config**: `dot_config/mise/config.toml.tmpl`
+
 ## Documentation Updates
 
 When editing configuration files that change the installed software or system setup, **ALWAYS** update SETUP.md to keep it in sync:

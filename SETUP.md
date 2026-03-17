@@ -132,6 +132,10 @@ installed_software:
       - name: firecrawl-cli
         version: latest
         install_via: npm
+      - name: tokscale
+        version: latest
+        install_via: npm
+        note: Token usage tracker for AI coding assistants
     monitoring:
       - name: btop
         version: latest
