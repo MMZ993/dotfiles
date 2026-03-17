@@ -1,6 +1,7 @@
 ---
 description: Quick Q&A agent for direct answers. Use for factual questions, explanations, how-things-work, or anything that needs a straight answer rather than code changes.
 mode: primary
+color: "#94A3B8"
 permission:
   "*": deny
   bash: allow

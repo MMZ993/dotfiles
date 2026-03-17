@@ -2,6 +2,21 @@
 description: Infrastructure and DevOps agent — Ansible, Terraform, Kubernetes, Linux, GitLab CI/CD, secrets, networking. Safety-first, industrial standards.
 mode: primary
 color: "#0EA5E9"
+permission:
+  "*": deny
+  bash: allow
+  read: allow
+  glob: allow
+  grep: allow
+  edit: allow
+  write: allow
+  webfetch: allow
+  websearch: allow
+  skill:
+    "*": deny
+    find-docs: allow
+    commit: allow
+  task: allow
 ---
 
 # Role & Tone
