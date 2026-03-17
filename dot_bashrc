@@ -6,7 +6,7 @@ if [ -f /etc/bashrc ]; then
 fi
 
 # PATH setup
-for dir in "$HOME/.local/bin" "$HOME/.local/cli/bin" "$HOME/bin" "$HOME/.opencode/bin"; do
+for dir in "$HOME/.local/bin" "$HOME/.local/cli/bin" "$HOME/bin" "$HOME/.opencode/bin" "$HOME/.scripts"; do
     if [ -d "$dir" ] && [[ ":$PATH:" != *":$dir:"* ]]; then
         PATH="$dir:$PATH"
     fi
