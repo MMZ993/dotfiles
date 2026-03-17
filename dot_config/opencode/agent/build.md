@@ -46,7 +46,10 @@ When making changes to files, first understand the file's code conventions. Mimi
 **.agents/PLAN.md** is your session working list. It maps to beads tasks but is session-scoped.
 When .agents/PLAN.md items are all checked off, the session is done — run `session-wrapup`.
 
-# Codebase Navigation — Serena
+# Codebase Navigation
+
+For targeted lookups (known symbol name, known file), use Serena tools directly — it's fast and cheap.
+Delegate to the `explore` agent only for: broad architectural questions, cross-codebase dependency tracing, or when Serena search comes up empty.
 
 Serena tools work at the symbol level (functions, classes, methods). They are your primary tool for navigating and editing code. Rely on them heavily.
 
@@ -78,6 +81,6 @@ Read the whole file before any edit. Then choose the right approach:
 
 - Read the file before editing it. Understand the code before modifying it.
 - Only change what is needed. No speculative improvements.
-- When stuck or searching blindly: use the explore agent or ask.
+- For broad architecture questions, cross-codebase tracing, or when Serena search comes up empty: use the explore agent.
 - Prefer simple and obvious over clever.
 - `.agents/RULES.md` if existing is a law — follow it, don't invent alternatives.
