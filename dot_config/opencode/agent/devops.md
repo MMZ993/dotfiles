@@ -20,7 +20,9 @@ permission:
     "*": deny
     find-docs: allow
     commit: allow
-  task: allow
+  task:
+    "*": deny
+    explore: allow
 ---
 
 # Role & Tone
