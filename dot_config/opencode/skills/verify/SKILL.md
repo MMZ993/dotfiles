@@ -9,10 +9,19 @@ Always run the full test suite, not just the test you just wrote. A passing new 
 
 Use the test command from `.agents/RULES.md`. If not specified, check `package.json` scripts, `Makefile`, or equivalent for the project's standard test command.
 
+## Run the linter
+
+After the test suite passes, run the lint command from `.agents/RULES.md`. If not specified, check `package.json` scripts, `Makefile`, or equivalent (e.g. `eslint`, `ruff`, `golangci-lint`). If no lint command exists for the project, skip this step.
+
+Lint must pass cleanly — no new errors or warnings introduced by your changes.
+
+If lint fails: fix the issues, then re-run both the full suite and lint before continuing.
+
 ## A clean run requires
 
 - All tests pass
-- No new warnings introduced (check if the project treats warnings as errors)
+- Lint passes with no new errors or warnings
+- No new warnings introduced by the test runner (check if the project treats warnings as errors)
 - No skipped or pending tests that were previously passing
 
 ## If any test fails
