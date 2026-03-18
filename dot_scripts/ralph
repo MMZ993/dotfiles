@@ -5,6 +5,7 @@ set -uo pipefail
 MAX_ITERATIONS=${RALPH_MAX_ITERATIONS:-20}
 MAX_CONSECUTIVE_FAILURES=${RALPH_MAX_FAILURES:-3}
 AGENT=${RALPH_AGENT:-build}
+AGENT_OUTPUT_LINES=${RALPH_OUTPUT_LINES:-50}  # lines of agent output passed to next prompt
 
 RALPH_FILE=".agents/RALPH.md"
 HANDOFF_FILE=".agents/HANDOFF.md"
@@ -37,20 +38,27 @@ if ! command -v bd >/dev/null 2>&1; then
     exit 1
 fi
 
-# ─── Parse status from a RALPH.md line ────────────────────────────────────────
+# ─── Helpers ──────────────────────────────────────────────────────────────────
 parse_status() {
     echo "$1" | sed 's/iteration [0-9]*: //' | awk '{print $1}'
+}
+
+ensure_newline() {
+    [ -f "$1" ] && [ -n "$(tail -c1 "$1")" ] && echo >> "$1"
+}
+
+strip_ansi() {
+    sed 's/\x1b\[[0-9;]*[a-zA-Z]//g'
 }
 
 # ─── Resume state from existing RALPH.md ──────────────────────────────────────
 consecutive_failures=0
 iteration=1
 ralph_memory=""
+agent_prev_output=""
 
 if [ -f "$RALPH_FILE" ]; then
-    # Ensure file ends with newline for reliable wc -l
-    [ -n "$(tail -c1 "$RALPH_FILE")" ] && echo >> "$RALPH_FILE"
-
+    ensure_newline "$RALPH_FILE"
     existing_lines=$(wc -l < "$RALPH_FILE")
     iteration=$((existing_lines + 1))
     ralph_memory=$(cat "$RALPH_FILE")
@@ -64,7 +72,7 @@ if [ -f "$RALPH_FILE" ]; then
 
     log "Resuming at iteration $iteration. Last status: $last_status"
 
-    # Count consecutive failures from the end of the file
+    # Count consecutive failures from the end of file
     while IFS= read -r line; do
         s=$(parse_status "$line")
         if [ "$s" = "failed" ]; then
@@ -92,111 +100,143 @@ while [ "$iteration" -le "$MAX_ITERATIONS" ]; do
     log "━━━ Iteration $iteration / $MAX_ITERATIONS ━━━"
 
     # Snapshot HANDOFF before run
-    handoff_before=false
     sha_before=""
-    if [ -f "$HANDOFF_FILE" ]; then
-        handoff_before=true
-        sha_before=$(sha256sum "$HANDOFF_FILE" | cut -d' ' -f1)
-    fi
+    [ -f "$HANDOFF_FILE" ] && sha_before=$(sha256sum "$HANDOFF_FILE" | cut -d' ' -f1)
 
-    # Build prompt
+    # Build prompt — include previous status and agent's last output
     if [ "$iteration" -eq 1 ]; then
         prev_status="none (first iteration)"
     else
         prev_status=$(parse_status "$(tail -1 "$RALPH_FILE")")
     fi
-    prompt="Iteration $iteration. Previous: $prev_status."
 
-    # Run opencode — stream to terminal, capture to temp file for COMPLETE check
+    prompt="Iteration $iteration. Previous: $prev_status."
+    if [ -n "$agent_prev_output" ]; then
+        prompt="$prompt Agent notes from last iteration: $agent_prev_output"
+    fi
+
+    # Run opencode — stream live to terminal, capture to temp file
     tmp_out=$(mktemp)
     opencode run --agent "$AGENT" --command ralph-loop "$prompt" 2>&1 | tee "$tmp_out" || true
-    complete_signal=$(grep -c "^COMPLETE$" "$tmp_out" 2>/dev/null || echo 0)
+    agent_output=$(cat "$tmp_out")
     rm -f "$tmp_out"
-
     echo ""
 
-    # Check for COMPLETE signal in output
-    if [ "$complete_signal" -gt 0 ]; then
-        ok "Agent signalled COMPLETE. Project finished after $iteration iterations."
-        exit 0
-    fi
+    # Extract last lines for next iteration's prompt (strip ANSI, skip blank lines)
+    agent_prev_output=$(echo "$agent_output" | strip_ansi | grep -v '^\s*$' | tail -"$AGENT_OUTPUT_LINES")
 
-    # ── HANDOFF stall detection ──────────────────────────────────────────────
-    handoff_after=false
-    sha_after=""
-    if [ -f "$HANDOFF_FILE" ]; then
-        handoff_after=true
-        sha_after=$(sha256sum "$HANDOFF_FILE" | cut -d' ' -f1)
-    fi
+    # ── Check RALPH.md first — it is the authoritative source ────────────────
+    ralph_written=false
 
-    stalled=false
-    if ! $handoff_after; then
-        warn "HANDOFF.md was never written — agent stalled."
-        stalled=true
-    elif $handoff_before && [ "$sha_before" = "$sha_after" ]; then
-        warn "HANDOFF.md unchanged — agent stalled."
-        stalled=true
-    fi
-
-    if $stalled; then
-        echo "iteration $iteration: failed - agent stalled, no handoff written" >> "$RALPH_FILE"
-        ralph_memory=$(cat "$RALPH_FILE")
-        ((consecutive_failures++)) || true
-        ((iteration++)) || true
-        continue
-    fi
-
-    # ── RALPH.md integrity check ─────────────────────────────────────────────
-    ralph_ok=true
-
-    if [ ! -f "$RALPH_FILE" ]; then
-        warn "RALPH.md not found after run."
-        ralph_ok=false
-    else
-        [ -n "$(tail -c1 "$RALPH_FILE")" ] && echo >> "$RALPH_FILE"
+    if [ -f "$RALPH_FILE" ]; then
+        ensure_newline "$RALPH_FILE"
         current_lines=$(wc -l < "$RALPH_FILE")
 
-        # Line count must be exactly iteration
-        if [ "$current_lines" -ne "$iteration" ]; then
-            warn "RALPH.md line count mismatch (expected $iteration, got $current_lines)."
-            ralph_ok=false
-        fi
+        if [ "$current_lines" -eq "$iteration" ]; then
+            # Agent wrote their line
+            ralph_written=true
 
-        # Previous lines must be unchanged (allow last line modification for downgrades)
-        if [ -n "$ralph_memory" ]; then
-            prev_count=$(echo "$ralph_memory" | wc -l)
-            if [ "$prev_count" -gt 1 ]; then
-                expected_history=$(echo "$ralph_memory" | head -n $((prev_count - 1)))
-                actual_history=$(head -n $((prev_count - 1)) "$RALPH_FILE")
-                if [ "$expected_history" != "$actual_history" ]; then
-                    warn "RALPH.md history was tampered with — restoring from memory."
-                    ralph_ok=false
-                fi
+        elif [ "$current_lines" -lt "$iteration" ]; then
+            # Agent didn't write their line — genuine stall
+            warn "Agent did not write to RALPH.md."
+
+        else
+            # More lines than expected — integrity issue
+            warn "RALPH.md has too many lines (expected $iteration, got $current_lines). Restoring from memory."
+            if [ -n "$ralph_memory" ]; then
+                echo "$ralph_memory" > "$RALPH_FILE"
+            fi
+        fi
+    else
+        warn "RALPH.md not found after run."
+    fi
+
+    # ── RALPH.md history integrity check ────────────────────────────────────
+    if $ralph_written && [ -n "$ralph_memory" ]; then
+        prev_count=$(echo "$ralph_memory" | wc -l)
+        if [ "$prev_count" -gt 1 ]; then
+            expected_history=$(echo "$ralph_memory" | head -n $((prev_count - 1)))
+            actual_history=$(head -n $((prev_count - 1)) "$RALPH_FILE")
+            if [ "$expected_history" != "$actual_history" ]; then
+                warn "RALPH.md history tampered — restoring from memory."
+                echo "$ralph_memory" > "$RALPH_FILE"
+                ralph_written=false
             fi
         fi
     fi
 
-    if ! $ralph_ok; then
-        # Restore from memory and append failure
-        if [ -n "$ralph_memory" ]; then
-            echo "$ralph_memory" > "$RALPH_FILE"
-        fi
-        echo "iteration $iteration: failed - ralph.md integrity check failed" >> "$RALPH_FILE"
+    # ── If agent didn't write RALPH.md, append stall failure ────────────────
+    if ! $ralph_written; then
+        echo "iteration $iteration: failed - agent stalled, no ralph entry written" >> "$RALPH_FILE"
         ralph_memory=$(cat "$RALPH_FILE")
         ((consecutive_failures++)) || true
         ((iteration++)) || true
         continue
+    fi
+
+    # ── HANDOFF check — secondary, warning only ──────────────────────────────
+    sha_after=""
+    [ -f "$HANDOFF_FILE" ] && sha_after=$(sha256sum "$HANDOFF_FILE" | cut -d' ' -f1)
+
+    if [ -z "$sha_after" ]; then
+        warn "HANDOFF.md was not written. Agent may not have followed the full flow."
+    elif [ -n "$sha_before" ] && [ "$sha_before" = "$sha_after" ]; then
+        warn "HANDOFF.md unchanged. Agent may have skipped the wrapup step."
     fi
 
     # ── Parse and act on current iteration status ────────────────────────────
     current_line=$(tail -1 "$RALPH_FILE")
     current_status=$(parse_status "$current_line")
+    complete_in_output=$(echo "$agent_output" | grep -c "^COMPLETE$" 2>/dev/null || echo 0)
+
+    # Both signals agree on complete — done
+    if [ "$current_status" = "complete" ] && [ "$complete_in_output" -gt 0 ]; then
+        ok "Project complete after $iteration iterations (RALPH.md and output agree)."
+        exit 0
+    fi
+
+    # RALPH says complete but output didn't signal — still trust RALPH, but log it
+    if [ "$current_status" = "complete" ] && [ "$complete_in_output" -eq 0 ]; then
+        ok "Project complete after $iteration iterations (RALPH.md). Note: agent did not output COMPLETE signal."
+        exit 0
+    fi
+
+    # Output says COMPLETE but RALPH doesn't agree — run reconciliation iteration
+    if [ "$complete_in_output" -gt 0 ] && [ "$current_status" != "complete" ]; then
+        warn "Agent output COMPLETE but RALPH.md shows '$current_status'. Running reconciliation check."
+        ((iteration++)) || true
+        ralph_memory=$(cat "$RALPH_FILE")
+        reconcile_prompt="RECONCILIATION: Iteration $((iteration - 1)) output the word COMPLETE but RALPH.md shows '$current_status'. Run the full completion check (tests, lint, git, PRD, beads). If the project is truly finished write 'iteration $iteration: complete' to RALPH.md and output COMPLETE. If not, write 'iteration $iteration: success' and continue normally."
+        tmp_out=$(mktemp)
+        opencode run --agent "$AGENT" --command ralph-loop "$reconcile_prompt" 2>&1 | tee "$tmp_out" || true
+        agent_output=$(cat "$tmp_out")
+        rm -f "$tmp_out"
+        agent_prev_output=$(echo "$agent_output" | strip_ansi | grep -v '^\s*$' | tail -"$AGENT_OUTPUT_LINES")
+        echo ""
+
+        ensure_newline "$RALPH_FILE"
+        current_lines=$(wc -l < "$RALPH_FILE")
+        if [ "$current_lines" -eq "$iteration" ]; then
+            current_line=$(tail -1 "$RALPH_FILE")
+            current_status=$(parse_status "$current_line")
+            if [ "$current_status" = "complete" ]; then
+                ok "Project complete after reconciliation."
+                exit 0
+            fi
+            warn "Reconciliation result: $current_status. Continuing loop."
+            ralph_memory=$(cat "$RALPH_FILE")
+        else
+            warn "Reconciliation: agent did not write RALPH.md entry. Appending failure."
+            echo "iteration $iteration: failed - reconciliation stalled" >> "$RALPH_FILE"
+            ralph_memory=$(cat "$RALPH_FILE")
+            ((consecutive_failures++)) || true
+        fi
+        ((iteration++)) || true
+        echo ""
+        continue
+    fi
 
     case "$current_status" in
-        complete)
-            ok "Project complete after $iteration iterations."
-            exit 0
-            ;;
         success)
             ok "Iteration $iteration succeeded."
             consecutive_failures=0
