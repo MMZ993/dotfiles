@@ -131,6 +131,12 @@ note() {
     fi
 }
 
+td() {
+    ${EDITOR:-vi} "$HOME/.TODO.md"
+}
+
+
+
 # llm wrapper for easier use
 ai() {
     # 1. Set the default model (uses LLM_MODEL env var, or defaults to gpt-4o-mini)
