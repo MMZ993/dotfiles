@@ -239,6 +239,15 @@ while [ "$iteration" -le "$MAX_ITERATIONS" ]; do
             fi
             warn "Reconciliation result: $current_status. Continuing loop."
             ralph_memory=$(cat "$RALPH_FILE")
+        elif [ "$current_lines" -gt "$iteration" ]; then
+            warn "Reconciliation: RALPH.md has too many lines (expected $iteration, got $current_lines). Restoring from memory."
+            if [ -n "$ralph_memory" ]; then
+                echo "$ralph_memory" > "$RALPH_FILE"
+            fi
+            echo "iteration $iteration: failed - reconciliation stalled" >> "$RALPH_FILE"
+            [ -f "$HANDOFF_FILE" ] && cp "$HANDOFF_FILE" "$HISTORY_DIR/handoff-${iteration}-reconcile.md"
+            ralph_memory=$(cat "$RALPH_FILE")
+            ((consecutive_failures++)) || true
         else
             warn "Reconciliation: agent did not write RALPH.md entry. Appending failure."
             echo "iteration $iteration: failed - reconciliation stalled" >> "$RALPH_FILE"
