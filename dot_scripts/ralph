@@ -100,8 +100,6 @@ while [ "$iteration" -le "$MAX_ITERATIONS" ]; do
 
     log "━━━ Iteration $iteration / $MAX_ITERATIONS ━━━"
 
-    handoff_note=""
-
     # Snapshot HANDOFF before run
     sha_before=""
     [ -f "$HANDOFF_FILE" ] && sha_before=$(sha256sum "$HANDOFF_FILE" | cut -d' ' -f1)
@@ -225,6 +223,7 @@ while [ "$iteration" -le "$MAX_ITERATIONS" ]; do
         opencode run --agent "$AGENT" --command ralph-loop "$reconcile_prompt" 2>&1 | tee "$tmp_out" || true
         agent_output=$(cat "$tmp_out")
         rm -f "$tmp_out"
+        echo "$agent_output" | strip_ansi > "$HISTORY_DIR/output-${iteration}-reconcile.txt"
         agent_prev_output=$(echo "$agent_output" | strip_ansi | grep -v '^\s*$' | tail -"$AGENT_OUTPUT_LINES")
         echo ""
 
@@ -233,6 +232,7 @@ while [ "$iteration" -le "$MAX_ITERATIONS" ]; do
         if [ "$current_lines" -eq "$iteration" ]; then
             current_line=$(tail -1 "$RALPH_FILE")
             current_status=$(parse_status "$current_line")
+            [ -f "$HANDOFF_FILE" ] && cp "$HANDOFF_FILE" "$HISTORY_DIR/handoff-${iteration}-reconcile.md"
             if [ "$current_status" = "complete" ]; then
                 ok "Project complete after reconciliation."
                 exit 0
@@ -242,6 +242,7 @@ while [ "$iteration" -le "$MAX_ITERATIONS" ]; do
         else
             warn "Reconciliation: agent did not write RALPH.md entry. Appending failure."
             echo "iteration $iteration: failed - reconciliation stalled" >> "$RALPH_FILE"
+            [ -f "$HANDOFF_FILE" ] && cp "$HANDOFF_FILE" "$HISTORY_DIR/handoff-${iteration}-reconcile.md"
             ralph_memory=$(cat "$RALPH_FILE")
             ((consecutive_failures++)) || true
         fi
