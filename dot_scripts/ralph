@@ -9,6 +9,7 @@ AGENT_OUTPUT_LINES=${RALPH_OUTPUT_LINES:-50}  # lines of agent output passed to 
 
 RALPH_FILE=".agents/RALPH.md"
 HANDOFF_FILE=".agents/HANDOFF.md"
+HISTORY_DIR=".agents/history"
 
 # ─── Output helpers ───────────────────────────────────────────────────────────
 RED='\033[0;31m'
@@ -99,6 +100,8 @@ while [ "$iteration" -le "$MAX_ITERATIONS" ]; do
 
     log "━━━ Iteration $iteration / $MAX_ITERATIONS ━━━"
 
+    handoff_note=""
+
     # Snapshot HANDOFF before run
     sha_before=""
     [ -f "$HANDOFF_FILE" ] && sha_before=$(sha256sum "$HANDOFF_FILE" | cut -d' ' -f1)
@@ -114,13 +117,20 @@ while [ "$iteration" -le "$MAX_ITERATIONS" ]; do
     if [ -n "$agent_prev_output" ]; then
         prompt="$prompt Agent notes from last iteration: $agent_prev_output"
     fi
+    if [ -n "${handoff_note:-}" ]; then
+        prompt="$prompt $handoff_note"
+    fi
 
     # Run opencode — stream live to terminal, capture to temp file
+    mkdir -p "$HISTORY_DIR"
     tmp_out=$(mktemp)
     opencode run --agent "$AGENT" --command ralph-loop "$prompt" 2>&1 | tee "$tmp_out" || true
     agent_output=$(cat "$tmp_out")
     rm -f "$tmp_out"
     echo ""
+
+    # Save raw output to history
+    echo "$agent_output" | strip_ansi > "$HISTORY_DIR/output-${iteration}.txt"
 
     # Extract last lines for next iteration's prompt (strip ANSI, skip blank lines)
     agent_prev_output=$(echo "$agent_output" | strip_ansi | grep -v '^\s*$' | tail -"$AGENT_OUTPUT_LINES")
@@ -168,20 +178,24 @@ while [ "$iteration" -le "$MAX_ITERATIONS" ]; do
     # ── If agent didn't write RALPH.md, append stall failure ────────────────
     if ! $ralph_written; then
         echo "iteration $iteration: failed - agent stalled, no ralph entry written" >> "$RALPH_FILE"
+        [ -f "$HANDOFF_FILE" ] && cp "$HANDOFF_FILE" "$HISTORY_DIR/handoff-${iteration}.md"
         ralph_memory=$(cat "$RALPH_FILE")
         ((consecutive_failures++)) || true
         ((iteration++)) || true
         continue
     fi
 
-    # ── HANDOFF check — secondary, warning only ──────────────────────────────
+    # ── HANDOFF check — warning + inject context note into next prompt ───────
     sha_after=""
     [ -f "$HANDOFF_FILE" ] && sha_after=$(sha256sum "$HANDOFF_FILE" | cut -d' ' -f1)
 
+    handoff_note=""
     if [ -z "$sha_after" ]; then
-        warn "HANDOFF.md was not written. Agent may not have followed the full flow."
+        warn "HANDOFF.md was not written. Injecting context note into next prompt."
+        handoff_note="WARNING: previous iteration did not write HANDOFF.md. You have no structured handoff — use git log, PLAN.md, and RALPH.md to reconstruct context before proceeding."
     elif [ -n "$sha_before" ] && [ "$sha_before" = "$sha_after" ]; then
-        warn "HANDOFF.md unchanged. Agent may have skipped the wrapup step."
+        warn "HANDOFF.md unchanged. Injecting context note into next prompt."
+        handoff_note="WARNING: previous iteration did not update HANDOFF.md. It may be stale — cross-check with git log and PLAN.md before trusting it."
     fi
 
     # ── Parse and act on current iteration status ────────────────────────────
@@ -250,6 +264,11 @@ while [ "$iteration" -le "$MAX_ITERATIONS" ]; do
             ((consecutive_failures++)) || true
             ;;
     esac
+
+    # Archive HANDOFF for this iteration
+    if [ -f "$HANDOFF_FILE" ]; then
+        cp "$HANDOFF_FILE" "$HISTORY_DIR/handoff-${iteration}.md"
+    fi
 
     # Update in-memory copy
     ralph_memory=$(cat "$RALPH_FILE")
