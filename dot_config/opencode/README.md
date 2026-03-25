@@ -20,7 +20,7 @@ All project context lives in `.agents/` at the repo root:
 
 ### Workflows
 
-**New project:**
+**New project (interactive):**
 ```
 /brainstorm → .agents/PRD.md
 /prepare-rules → .agents/RULES.md
@@ -28,11 +28,26 @@ All project context lives in `.agents/` at the repo root:
 /dev → TDD loop → review → commit → session-wrapup
 ```
 
-**Existing / cloned project:**
+**New project (autonomous / unattended):**
+```
+/brainstorm → .agents/PRD.md
+/prepare-rules → .agents/RULES.md
+/prepare-backlog → beads tasks (confirm)
+ralph  →  TDD loop → review → commit → HANDOFF (repeats)
+```
+
+**Existing / cloned project (interactive):**
 ```
 /survey-codebase → .agents/RULES.md
-/plan → .agents/PLAN.md + beads tasks
+/plan → .agents/PLAN.md + beads tasks        ← you scope each session
 /dev → TDD loop → review → commit → session-wrapup
+```
+
+**Existing / cloned project (autonomous / unattended):**
+```
+/survey-codebase → .agents/RULES.md
+/prepare-backlog [instructions] → beads tasks (confirm)
+ralph  →  TDD loop → review → commit → HANDOFF (repeats)
 ```
 
 **Resuming a session:**
@@ -86,6 +101,7 @@ User-invoked slash commands. Not called autonomously by the agent.
 | `/brainstorm` | Design dialogue → produces `.agents/PRD.md` |
 | `/prepare-rules` | Generates `.agents/RULES.md` from PRD — for new projects |
 | `/survey-codebase` | Generates `.agents/RULES.md` from existing code — for cloned/existing projects |
+| `/prepare-backlog` | Creates or reviews/corrects the Beads backlog from PRD — run before ralph |
 | `/plan` | Creates `.agents/PLAN.md` and syncs beads tasks for the session |
 | `/dev` | Executes the TDD loop through PLAN.md |
 | `/quickfix` | TDD loop for a single fix or small change — no planning ritual, no session wrapup |

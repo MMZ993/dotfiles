@@ -94,14 +94,29 @@ Proceed to Step 4.
 
 # Step 4 — Plan
 
-Read current open Beads tasks: `bd task list`. Cross-reference with `.agents/PRD.md` requirements and `.agents/HANDOFF.md` carry-over.
+Run `bd task list`.
 
-Determine what to work on this iteration — scope it to what is achievable in one session. Prefer completing in-progress work before starting new tasks.
+**Beads is the authoritative source of truth for task status. HANDOFF `## Next` is a hint — use it for context, not as a directive.**
 
-Sync Beads:
-- If no epic exists: `bd epic create "<project name>"` first
-- For new tasks not yet in Beads: `bd task create "<description>" --epic <id>`
-- For tasks being picked up: `bd task update <id> --status in-progress`
+### Pick what to work on — priority order:
+1. Any task already `in-progress` in Beads (finish what was started)
+2. Carry-over explicitly flagged as incomplete in HANDOFF.md
+3. The smallest, most self-contained open tasks — prefer tasks with no dependencies on other open tasks
+
+**Cap: pick at most 2–3 tasks per iteration.** If fewer tasks clearly fill the iteration, take fewer.
+
+### Size assessment — do this before marking anything in-progress:
+
+For each candidate task, ask: does completing it require touching more than ~3 unrelated areas of the codebase, or does it have more than ~4 distinct implementation steps?
+
+- **If yes — the task is too large for one iteration.** Split it into sub-tasks in Beads first:
+  - `bd task create "<sub-task 1>" --epic <id>`
+  - `bd task create "<sub-task 2>" --epic <id>`
+  - Pick the first sub-task as this iteration's work. Leave the rest open.
+- **If no — pick it as-is.**
+
+Mark selected tasks in-progress:
+- `bd task update <id> --status in-progress`
 
 **If there is nothing to plan** — no open Beads tasks, no unimplemented requirements in PRD.md, no carry-over from HANDOFF — proceed to Step 5 (Completion Check). Do not write a PLAN.md.
 

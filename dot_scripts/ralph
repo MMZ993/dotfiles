@@ -39,6 +39,16 @@ if ! command -v bd >/dev/null 2>&1; then
     exit 1
 fi
 
+open_tasks=$(bd list --quiet 2>/dev/null | grep -c '.' || echo 0)
+if [ "$open_tasks" -eq 0 ]; then
+    err "No open Beads tasks found. Run /prepare-backlog first to set up the project backlog."
+    exit 1
+fi
+if [ "$open_tasks" -lt 3 ]; then
+    err "Only $open_tasks open task(s) found. Ralph is designed for multi-iteration projects — use /dev for small scoped work."
+    exit 1
+fi
+
 # ─── Helpers ──────────────────────────────────────────────────────────────────
 parse_status() {
     echo "$1" | sed 's/iteration [0-9]*: //' | awk '{print $1}'
