@@ -57,6 +57,9 @@ export LESS="-RiN"
 # ddgr prompt color bug fix
 export DISABLE_PROMPT_COLOR=1
 
+# OpenCode - disable Claude Code integration
+export OPENCODE_DISABLE_CLAUDE_CODE=1
+
 # Colorize man pages
 export LESS_TERMCAP_mb=$'\E[1;31m'
 export LESS_TERMCAP_md=$'\E[1;36m'
