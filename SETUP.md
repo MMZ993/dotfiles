@@ -322,6 +322,7 @@ bashrc:
     PAGER: less
     LESS: "-RiN"
     DISABLE_PROMPT_COLOR: 1 (ddgr fix)
+    OPENCODE_DISABLE_CLAUDE_CODE: 1 (disable Claude Code integration)
     HISTSIZE: 10000
     HISTFILESIZE: 20000
     HISTTIMEFORMAT: "%F %T "

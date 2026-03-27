@@ -15,6 +15,14 @@ When user asks to "install" something, they mean:
 - Always ask user to run `chezmoi apply` themselves after making config changes
 - This project uses chezmoi for dotfile management
 
+## Reading Large Files
+
+Before reading any file in full, check its line count first:
+```
+wc -l <file>
+```
+If the file exceeds 2000 lines, never read it all at once — use `offset` and `limit` to read it in chunks of at most 2000 lines. The bash tool may silently truncate output beyond 2000 lines.
+
 ## Configuration File Paths
 
 - **Mise config**: `dot_config/mise/config.toml.tmpl`
