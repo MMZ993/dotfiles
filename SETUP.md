@@ -162,6 +162,8 @@ installed_software:
     devops:
       - name: terraform
         version: latest
+      - name: vault
+        version: latest
       - name: kubectl
         version: latest
       - name: helm
