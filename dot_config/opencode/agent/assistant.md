@@ -12,6 +12,11 @@ permission:
   grep: allow
   webfetch: allow
   websearch: allow
+  skill:
+    "*": deny
+    firecrawl: allow
+    commit: allow
+    find-docs: allow
 ---
 
 # Role

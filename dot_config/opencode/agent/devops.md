@@ -19,6 +19,7 @@ permission:
   skill:
     "*": deny
     find-docs: allow
+    firecrawl: allow
     commit: allow
   task:
     "*": deny
