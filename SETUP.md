@@ -175,6 +175,9 @@ installed_software:
       - name: ansible-lint
         version: latest
         install_via: pipx
+      - name: pre-commit
+        version: latest
+        install_via: pipx
 
   # Tmux plugins via TPM
   tmux_plugins:
@@ -325,6 +328,7 @@ bashrc:
     LESS: "-RiN"
     DISABLE_PROMPT_COLOR: 1 (ddgr fix)
     OPENCODE_DISABLE_CLAUDE_CODE: 1 (disable Claude Code integration)
+    FIRECRAWL_NO_TELEMETRY: 1 (disable firecrawl-cli telemetry)
     HISTSIZE: 10000
     HISTFILESIZE: 20000
     HISTTIMEFORMAT: "%F %T "
