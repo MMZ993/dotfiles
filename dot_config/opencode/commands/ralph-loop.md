@@ -53,7 +53,7 @@ Run all of the following checks regardless of what the previous status claims:
 2. **Lint** — run the lint command from `.agents/RULES.md`. Must pass with no errors.
 3. **Git state** — run `git status`. Must be clean — no uncommitted changes, no untracked files that should be committed.
 4. **PLAN.md** — read `.agents/PLAN.md`. Every task must be `[x]`. If unchecked tasks remain, validation fails.
-5. **Beads** — run `bd task list`. No tasks should be `in-progress`. Open tasks are new work, not a failure.
+5. **td** — run `td task list`. No tasks should be `in_progress`. Open tasks are new work, not a failure.
 
 **If all 5 checks pass:** the previous iteration was genuinely successful.
 
@@ -94,12 +94,12 @@ Proceed to Step 4.
 
 # Step 4 — Plan
 
-Run `bd task list`.
+Run `td task list`.
 
-**Beads is the authoritative source of truth for task status. HANDOFF `## Next` is a hint — use it for context, not as a directive.**
+**td is the authoritative source of truth for task status. HANDOFF `## Next` is a hint — use it for context, not as a directive.**
 
 ### Pick what to work on — priority order:
-1. Any task already `in-progress` in Beads (finish what was started)
+1. Any task already `in_progress` in td (finish what was started)
 2. Carry-over explicitly flagged as incomplete in HANDOFF.md
 3. The smallest, most self-contained open tasks — prefer tasks with no dependencies on other open tasks
 
@@ -109,16 +109,16 @@ Run `bd task list`.
 
 For each candidate task, ask: does completing it require touching more than ~3 unrelated areas of the codebase, or does it have more than ~4 distinct implementation steps?
 
-- **If yes — the task is too large for one iteration.** Split it into sub-tasks in Beads first:
-  - `bd task create "<sub-task 1>" --epic <id>`
-  - `bd task create "<sub-task 2>" --epic <id>`
+- **If yes — the task is too large for one iteration.** Split it into sub-tasks in td first:
+  - `td task create "<sub-task 1>" --epic <id>`
+  - `td task create "<sub-task 2>" --epic <id>`
   - Pick the first sub-task as this iteration's work. Leave the rest open.
 - **If no — pick it as-is.**
 
 Mark selected tasks in-progress:
-- `bd task update <id> --status in-progress`
+- `td update <id> --status in_progress`
 
-**If there is nothing to plan** — no open Beads tasks, no unimplemented requirements in PRD.md, no carry-over from HANDOFF — proceed to Step 5 (Completion Check). Do not write a PLAN.md.
+**If there is nothing to plan** — no open td tasks, no unimplemented requirements in PRD.md, no carry-over from HANDOFF — proceed to Step 5 (Completion Check). Do not write a PLAN.md.
 
 Otherwise, write `.agents/PLAN.md`:
 
@@ -129,7 +129,7 @@ Otherwise, write `.agents/PLAN.md`:
 <One sentence: what will be accomplished this iteration>
 
 ## Tasks
-- [ ] <task description> (bd:<task-id>)
+- [ ] <task description> (td:<task-id>)
 
 ## Notes
 <Constraints, decisions, carry-over context>
@@ -148,7 +148,7 @@ Run all checks:
 2. **Lint** — must pass clean
 3. **Git state** — `git status` must be clean
 4. **PRD.md** — re-read all requirements. Confirm each one is implemented. If anything is missing, go back to Step 4 and plan it.
-5. **Beads** — `bd task list` — no open or in-progress tasks
+5. **td** — `td task list` — no open or in_progress tasks
 
 If all pass:
 - Write `.agents/HANDOFF.md` with a completion summary
@@ -181,7 +181,7 @@ Full suite + lint must pass. If it fails, invoke the `debugging` skill. Identify
 
 **4. Update tracking**
 - Check off in PLAN.md: `- [x]`
-- `bd task update <id> --status done`
+- `td update <id> --status closed`
 
 ---
 
@@ -215,7 +215,7 @@ Autonomous mode — no confirmation step. You are a judge, there is no user. Sta
 Tests passing, lint clean, git clean, all tasks committed.
 
 ## Next
-<What remains — open Beads tasks, known gaps, suggested focus for next iteration>
+<What remains — open td tasks, known gaps, suggested focus for next iteration>
 
 ## Notes
 <Any decisions made, trade-offs, things to be aware of>
@@ -259,4 +259,3 @@ Append to `.agents/RALPH.md`. Never modify previous lines.
 After writing to RALPH.md you may return a short text summary — it will be visible in the loop output. Use HANDOFF.md for structured data passed between sessions.
 
 If you are sure the full project is completed and you wrote `complete` to RALPH.md, output only the word `COMPLETE` as your final text — the loop script uses this to stop.
-

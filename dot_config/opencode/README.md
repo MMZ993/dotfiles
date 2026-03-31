@@ -24,7 +24,7 @@ All project context lives in `.agents/` at the repo root:
 ```
 /brainstorm → .agents/PRD.md
 /prepare-rules → .agents/RULES.md
-/plan → .agents/PLAN.md + beads tasks
+/plan → .agents/PLAN.md + td tasks
 /dev → TDD loop → review → commit → session-wrapup
 ```
 
@@ -32,21 +32,21 @@ All project context lives in `.agents/` at the repo root:
 ```
 /brainstorm → .agents/PRD.md
 /prepare-rules → .agents/RULES.md
-/prepare-backlog → beads tasks (confirm)
+/prepare-backlog → td tasks (confirm)
 ralph  →  TDD loop → review → commit → HANDOFF (repeats)
 ```
 
 **Existing / cloned project (interactive):**
 ```
 /survey-codebase → .agents/RULES.md
-/plan → .agents/PLAN.md + beads tasks        ← you scope each session
+/plan → .agents/PLAN.md + td tasks        ← you scope each session
 /dev → TDD loop → review → commit → session-wrapup
 ```
 
 **Existing / cloned project (autonomous / unattended):**
 ```
 /survey-codebase → .agents/RULES.md
-/prepare-backlog [instructions] → beads tasks (confirm)
+/prepare-backlog [instructions] → td tasks (confirm)
 ralph  →  TDD loop → review → commit → HANDOFF (repeats)
 ```
 
@@ -59,7 +59,7 @@ ralph  →  TDD loop → review → commit → HANDOFF (repeats)
 ```
 /quickfix → TDD loop → review → commit
 ```
-No planning ritual, no beads tracking (unless a task ID is provided). Use when the change is too small to warrant a full session.
+No planning ritual, no td tracking (unless a task ID is provided). Use when the change is too small to warrant a full session.
 
 ### The `/dev` loop
 
@@ -69,12 +69,12 @@ For each task in PLAN.md:
   implement → pass the test
   verify skill → full suite passes
   if fails → debugging skill → fix → verify again
-  check off task + update beads
+  check off task + update td
 
 When all done:
   request-review skill → code-reviewer agent
   commit skill
-  session-wrapup skill → HANDOFF.md + close beads tasks
+  session-wrapup skill → HANDOFF.md + close td tasks
 ```
 
 ---
@@ -101,8 +101,8 @@ User-invoked slash commands. Not called autonomously by the agent.
 | `/brainstorm` | Design dialogue → produces `.agents/PRD.md` |
 | `/prepare-rules` | Generates `.agents/RULES.md` from PRD — for new projects |
 | `/survey-codebase` | Generates `.agents/RULES.md` from existing code — for cloned/existing projects |
-| `/prepare-backlog` | Creates or reviews/corrects the Beads backlog from PRD — run before ralph |
-| `/plan` | Creates `.agents/PLAN.md` and syncs beads tasks for the session |
+| `/prepare-backlog` | Creates or reviews/corrects the td backlog from PRD — run before ralph |
+| `/plan` | Creates `.agents/PLAN.md` and syncs td tasks for the session |
 | `/dev` | Executes the TDD loop through PLAN.md |
 | `/quickfix` | TDD loop for a single fix or small change — no planning ritual, no session wrapup |
 | `/ralph-loop` | Autonomous plan+dev iteration for unattended loops — validates previous session, executes TDD, writes HANDOFF and RALPH.md status |
@@ -120,7 +120,7 @@ Invoked by the agent at specific points in the workflow. Can also be run manuall
 | `debugging` | When verify fails — finds root cause before any fix |
 | `request-review` | After all PLAN.md tasks done — packages context for code-reviewer |
 | `commit` | After review passes — conventional commits, atomic |
-| `session-wrapup` | End of session — HANDOFF.md, closes beads tasks |
+| `session-wrapup` | End of session — HANDOFF.md, closes td tasks |
 | `find-docs` | On demand — looks up library docs and verifies versions via Context7 |
 
 ---
@@ -139,7 +139,7 @@ Invoked by the agent at specific points in the workflow. Can also be run manuall
 
 | Tool | Command | Purpose |
 |---|---|---|
-| **Beads** | `bd` | Persistent project backlog — epics and tasks across sessions |
+| **td** | `td` | Persistent project backlog — epics and tasks across sessions |
 | **Context7** | `ctx7` | Up-to-date library documentation and version lookup |
 | **git** | `git` | Version control — diffs, commits, history |
 
@@ -165,4 +165,3 @@ All MCP tools are denied globally. Each agent explicitly allows only what it nee
 - `cbm_*` — denied globally, explore agent re-enables
 
 This prevents agents from accidentally using tools outside their role.
-

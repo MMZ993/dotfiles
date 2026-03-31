@@ -30,8 +30,8 @@ Even for small changes. If the reviewer finds issues: fix, verify again, then re
 
 **5. Commit — invoke `commit` skill**
 
-**6. Beads (optional)**
-If the user provided a beads task ID, update it: `bd task update <id> --status done`
+**6. td (optional)**
+If the user provided a td task ID, update it: `td update <id> --status closed`
 If no ID was given, do not create one — this is a quick change, not a tracked task.
 
 ---

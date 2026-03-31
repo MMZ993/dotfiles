@@ -35,7 +35,7 @@ Do not start changing code based on intuition. The `debugging` skill defines the
 
 **5. Update tracking**
 - Check off the task in `.agents/PLAN.md`: `- [x]`
-- Update beads: `bd task update <id> --status done`
+- Update td: `td update <id> --status closed`
 
 ---
 
@@ -50,7 +50,7 @@ If the reviewer finds issues: fix them, return to step 3, then re-request review
 The `commit` skill defines how to stage and commit changes. Follow it.
 
 **8. Session wrapup — invoke `session-wrapup` skill**
-The `session-wrapup` skill handles writing `.agents/HANDOFF.md` and closing beads tasks. Follow it.
+The `session-wrapup` skill handles writing `.agents/HANDOFF.md` and closing td tasks. Follow it.
 
 ---
 

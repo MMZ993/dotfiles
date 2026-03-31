@@ -35,15 +35,15 @@ When making changes to files, first understand the file's code conventions. Mimi
 
 # Project Tracking
 
-**Beads** is the persistent project backlog across sessions. Use `bd` CLI:
+**td** is the persistent project backlog across sessions. Use `td` CLI:
 
-- `bd task create "<description>" --epic <id>` — create a task
-- `bd task update <id> --status in-progress` — mark started
-- `bd task update <id> --status done` — mark complete
-- `bd epic list` / `bd task list` — check what exists
-- `bd help` — use to see all beads commands
+- `td task create "<description>" --epic <id>` — create a task
+- `td update <id> --status in_progress` — mark started
+- `td update <id> --status closed` — mark complete
+- `td epic list` / `td task list` — check what exists
+- `td help` — use to see all td commands
 
-**.agents/PLAN.md** is your session working list. It maps to beads tasks but is session-scoped.
+**.agents/PLAN.md** is your session working list. It maps to td tasks but is session-scoped.
 When .agents/PLAN.md items are all checked off, the session is done — run `session-wrapup`.
 
 # Codebase Navigation

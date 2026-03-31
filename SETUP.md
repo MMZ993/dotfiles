@@ -124,9 +124,18 @@ installed_software:
         version: latest
         install_via: curl
         note: AI coding agent. Installs to ~/.opencode/bin. Config at dot_config/opencode/
-      - name: @beads/bd
+      - name: beads
+        version: 0.61.0
+        install_via: mise (npm:@beads/bd)
+        note: Provides bd CLI (temporarily pinned due to libicui18n.so.74 runtime mismatch in newer releases)
+      - name: dolt
         version: latest
-        install_via: npm
+        install_via: mise (aqua:dolthub/dolt)
+        note: Required by beads for Dolt-backed storage/server workflows
+      - name: td
+        version: latest
+        install_via: mise (github:marcus/td)
+        note: Local task tracker for AI coding sessions
       - name: aidex-mcp
         version: latest
         install_via: npm

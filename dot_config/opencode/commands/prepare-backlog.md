@@ -1,8 +1,8 @@
 ---
-description: Create or review/correct the Beads backlog from PRD — run before ralph to set up work items
+description: Create or review/correct the td backlog from PRD — run before ralph to set up work items
 ---
 
-# Prepare Beads Backlog
+# Prepare td Backlog
 
 You may receive user instructions as a prompt argument. If provided, treat them as priority directives — apply them on top of the standard process below.
 
@@ -18,9 +18,9 @@ Get the project name: run `basename $(git rev-parse --show-toplevel)`.
 
 ---
 
-## Step 2 — Check current Beads state
+## Step 2 — Check current td state
 
-Run `bd epic list` and `bd task list`.
+Run `td epic list` and `td task list`.
 
 This determines which path to take:
 
@@ -57,23 +57,23 @@ Cross-reference PRD requirements against what the codebase survey found. Tasks r
 
 ---
 
-## Step 5 — Sync Beads
+## Step 5 — Sync td
 
 ```
 # Create epic if it doesn't exist
-bd epic create "<project-name>"
+td epic create "<project-name>"
 
 # Create each task
-bd task create "<description>" --epic <id>
+td task create "<description>" --epic <id>
 
 # Close tasks that are already fully implemented (Path B only)
-bd task update <id> --status done
+td update <id> --status closed
 
 # Correct existing tasks per user instructions (Path B only)
-bd task update <id> ...
+td update <id> ...
 ```
 
-Do not create duplicate tasks — if a task with a matching description already exists in Beads, skip it.
+Do not create duplicate tasks — if a task with a matching description already exists in td, skip it.
 
 ---
 

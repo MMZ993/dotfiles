@@ -131,7 +131,7 @@ note() {
     fi
 }
 
-td() {
+todo() {
     ${EDITOR:-vi} "$HOME/.TODO.md"
 }
 

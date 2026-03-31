@@ -1,6 +1,6 @@
 ---
 name: session-wrapup
-description: Wraps up a coding session — documents completed work, closes beads tasks, and prepares .agents/HANDOFF.md for the next session
+description: Wraps up a coding session — documents completed work, closes td tasks, and prepares .agents/HANDOFF.md for the next session
 ---
 
 # Session Wrap-Up
@@ -29,14 +29,14 @@ If the file exists, read it and determine:
 - **Partially completed** — some items done, others not; document why (change of plan, blocked, still relevant)
 - **No longer applicable** — previous plan is obsolete; document why and what direction changed
 
-## 4. Close beads tasks
+## 4. Close td tasks
 
 For every task completed this session:
 ```
-bd task update <id> --status done
+td update <id> --status closed
 ```
 
-For tasks not completed but still relevant, leave them open or update their description if scope changed. Use `bd task list` to verify nothing was missed.
+For tasks not completed but still relevant, leave them open or update their description if scope changed. Use `td task list` to verify nothing was missed.
 
 ## 5. Check documentation
 
