@@ -4,6 +4,8 @@
 set -e
 
 {{- if eq .chezmoi.os "linux" }}
+  {{- $id := .chezmoi.osRelease.id -}}
+  {{- $idLike := (get .chezmoi.osRelease "idLike" | default "") -}}
   # Define packages to install
   PACKAGES="curl git python3"
 
@@ -24,17 +26,17 @@ set -e
   if [ "$NEEDS_INSTALL" = true ]; then
     echo "Installing system packages: $PACKAGES"
     
-    {{- if or (eq .chezmoi.osRelease.id "ubuntu" "debian" "pop" "linuxmint") (contains "debian" .chezmoi.osRelease.idLike) }}
+    {{- if or (eq $id "ubuntu" "debian" "pop" "linuxmint") (contains "debian" $idLike) }}
       sudo apt-get update
       sudo apt-get install -y $PACKAGES
-    {{- else if or (eq .chezmoi.osRelease.id "fedora" "nobara" "rhel") (contains "fedora" "rhel" .chezmoi.osRelease.idLike) }}
+    {{- else if or (eq $id "fedora" "nobara" "rhel" "rocky" "almalinux" "centos") (contains "fedora" $idLike) (contains "rhel" $idLike) }}
       sudo dnf install -y $PACKAGES
-    {{- else if or (eq .chezmoi.osRelease.id "arch" "manjaro") (contains "arch" .chezmoi.osRelease.idLike) }}
+    {{- else if or (eq $id "arch" "manjaro") (contains "arch" $idLike) }}
       sudo pacman -S --noconfirm --needed $PACKAGES
-    {{- else if or (eq .chezmoi.osRelease.id "opensuse" "opensuse-tumbleweed") (contains "suse" .chezmoi.osRelease.idLike) }}
+    {{- else if or (eq $id "opensuse" "opensuse-tumbleweed") (contains "suse" $idLike) }}
       sudo zypper install -y $PACKAGES
     {{- else }}
-      echo "Unsupported distribution: {{ .chezmoi.osRelease.id }}"
+      echo "Unsupported distribution: {{ $id }}"
       exit 1
     {{- end }}
   else
