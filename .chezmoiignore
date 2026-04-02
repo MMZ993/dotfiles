@@ -76,4 +76,21 @@ docker-compose.override.yml
 logs/*
 
 # Repo-only convenience files (not deployed)
+.gitignore
+README.md
+SETUP.md
+UPDATE.md
+AGENTS.md
+LICENSE
 README_OPENCODE.md
+
+# Embedded upstream docs/licenses (not deployed)
+dot_config/nvim/README.md
+dot_config/nvim/LICENSE
+
+# Repo-only directories (not deployed)
+ansible/**
+.beads/**
+.claude/**
+.serena/**
+.git/**
