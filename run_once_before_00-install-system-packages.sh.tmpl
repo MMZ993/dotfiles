@@ -6,8 +6,26 @@ set -e
 {{- if eq .chezmoi.os "linux" }}
   {{- $id := .chezmoi.osRelease.id -}}
   {{- $idLike := (get .chezmoi.osRelease "idLike" | default "") -}}
-  # Define packages to install
-  PACKAGES="curl git python3"
+  {{- if or (eq $id "ubuntu" "debian" "pop" "linuxmint") (contains "debian" $idLike) }}
+  PACKAGES="curl git python3 make g++"
+  REQUIRED_COMMANDS="curl git python3 make g++"
+  INSTALL_CMD='sudo apt-get update && sudo apt-get install -y'
+  {{- else if or (eq $id "fedora" "nobara" "rhel" "rocky" "almalinux" "centos") (contains "fedora" $idLike) (contains "rhel" $idLike) }}
+  PACKAGES="curl git python3 make gcc-c++"
+  REQUIRED_COMMANDS="curl git python3 make g++"
+  INSTALL_CMD='sudo dnf install -y'
+  {{- else if or (eq $id "arch" "manjaro") (contains "arch" $idLike) }}
+  PACKAGES="curl git python3 make gcc"
+  REQUIRED_COMMANDS="curl git python3 make g++"
+  INSTALL_CMD='sudo pacman -S --noconfirm --needed'
+  {{- else if or (eq $id "opensuse" "opensuse-tumbleweed") (contains "suse" $idLike) }}
+  PACKAGES="curl git python3 make gcc-c++"
+  REQUIRED_COMMANDS="curl git python3 make g++"
+  INSTALL_CMD='sudo zypper install -y'
+  {{- else }}
+  echo "Unsupported distribution: {{ $id }}"
+  exit 1
+  {{- end }}
 
   # Function to check if a command exists
   exists() {
@@ -16,8 +34,8 @@ set -e
 
   # Check if we need to install anything
   NEEDS_INSTALL=false
-  for pkg in $PACKAGES; do
-    if ! exists "$pkg"; then
+  for cmd in $REQUIRED_COMMANDS; do
+    if ! exists "$cmd"; then
       NEEDS_INSTALL=true
       break
     fi
@@ -25,20 +43,7 @@ set -e
 
   if [ "$NEEDS_INSTALL" = true ]; then
     echo "Installing system packages: $PACKAGES"
-    
-    {{- if or (eq $id "ubuntu" "debian" "pop" "linuxmint") (contains "debian" $idLike) }}
-      sudo apt-get update
-      sudo apt-get install -y $PACKAGES
-    {{- else if or (eq $id "fedora" "nobara" "rhel" "rocky" "almalinux" "centos") (contains "fedora" $idLike) (contains "rhel" $idLike) }}
-      sudo dnf install -y $PACKAGES
-    {{- else if or (eq $id "arch" "manjaro") (contains "arch" $idLike) }}
-      sudo pacman -S --noconfirm --needed $PACKAGES
-    {{- else if or (eq $id "opensuse" "opensuse-tumbleweed") (contains "suse" $idLike) }}
-      sudo zypper install -y $PACKAGES
-    {{- else }}
-      echo "Unsupported distribution: {{ $id }}"
-      exit 1
-    {{- end }}
+    eval "$INSTALL_CMD $PACKAGES"
   else
     echo "System packages already installed."
   fi

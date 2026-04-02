@@ -2,7 +2,7 @@
 installed_software:
   # Installation flow (chezmoi hooks)
   installation_order:
-    - chezmoi_base_packages (curl, git, python3) via system package manager
+    - chezmoi_base_packages (curl, git, python3, native build tools) via system package manager
     - uv via curl script
     - ansible via uv (needs python3 from step 1)
     - mise via curl script
@@ -12,9 +12,36 @@ installed_software:
 
   # Via chezmoi scripts (run BEFORE ansible)
   chezmoi_base_packages:
-    - curl
-    - git
-    - python3
+    common_commands:
+      - curl
+      - git
+      - python3
+      - make
+      - g++
+    debian/ubuntu_packages:
+      - curl
+      - git
+      - python3
+      - make
+      - g++
+    fedora/nobara/rhel_packages:
+      - curl
+      - git
+      - python3
+      - make
+      - gcc-c++
+    arch_packages:
+      - curl
+      - git
+      - python3
+      - make
+      - gcc
+    opensuse_packages:
+      - curl
+      - git
+      - python3
+      - make
+      - gcc-c++
 
   # Via chezmoi scripts
   chezmoi_scripts:
@@ -139,6 +166,7 @@ installed_software:
       - name: aidex-mcp
         version: latest
         install_via: npm
+        note: Requires native Node addon compilation support on Linux when no prebuilt binary is available
       - name: ctx7
         version: latest
         install_via: npm
