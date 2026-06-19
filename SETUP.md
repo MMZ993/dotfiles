@@ -185,6 +185,10 @@ installed_software:
         version: latest
         install_via: npm
         note: Mobile-first web UI for opencode (portal)
+      - name: agent-browser
+        version: latest
+        install_via: npm
+        note: Browser automation CLI for AI agents. Run `agent-browser install` after mise install to download Chrome for Testing.
     monitoring:
       - name: btop
         version: latest
@@ -209,6 +213,8 @@ installed_software:
         version: latest
       - name: lazygit
         version: latest
+      - name: glab
+        version: 1.91.0
       - name: ansible-lint
         version: latest
         install_via: pipx
