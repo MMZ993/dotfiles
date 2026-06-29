@@ -10,10 +10,10 @@ common_packages:
   - w3m
 
 # Distro-specific packages (concatenated with common)
-debian_packages: "{{ common_packages + ['build-essential', 'ca-certificates', 'gnupg', 'software-properties-common', 'xz-utils', 'netcat-openbsd'] }}"
+debian_packages: "{{ common_packages + ['build-essential', 'ca-certificates', 'gnupg', 'software-properties-common', 'xz-utils', 'netcat-openbsd', 'nfs-common'] }}"
 
-fedora_packages: "{{ common_packages + ['@development-tools', 'xz', 'nmap-ncat'] }}"
+fedora_packages: "{{ common_packages + ['@development-tools', 'xz', 'nmap-ncat', 'nfs-utils'] }}"
 
-arch_packages: "{{ common_packages + ['base-devel', 'xz', 'openbsd-netcat'] }}"
+arch_packages: "{{ common_packages + ['base-devel', 'xz', 'openbsd-netcat', 'nfs-utils'] }}"
 
-suse_packages: "{{ common_packages + ['patterns-devel-base-devel', 'xz', 'netcat'] }}"
+suse_packages: "{{ common_packages + ['patterns-devel-base-devel', 'xz', 'netcat', 'nfs-client'] }}"

@@ -70,18 +70,22 @@ installed_software:
       - software-properties-common
       - xz-utils
       - netcat-openbsd
+      - nfs-common
     fedora/nobara/rhel:
       - @development-tools
       - xz
       - nmap-ncat
+      - nfs-utils
     arch:
       - base-devel
       - xz
       - openbsd-netcat
+      - nfs-utils
     opensuse:
       - patterns-devel-base-devel
       - xz
       - netcat
+      - nfs-client
     docker:
       - docker-ce
       - docker-ce-cli
@@ -215,6 +219,10 @@ installed_software:
         version: latest
       - name: glab
         version: 1.91.0
+      - name: logcli
+        version: 3.7.2
+        install_via: mise (loki-logcli / aqua:grafana/loki/logcli)
+        note: Pinned because Grafana Loki also publishes operator releases; using latest may resolve to operator/v* without logcli assets
       - name: ansible-lint
         version: latest
         install_via: pipx
