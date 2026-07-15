@@ -362,6 +362,12 @@ configs:
       - code-reviewer (subagent, post-plan review)
     workflow_docs: dot_config/opencode/README.md
 
+  pi:
+    config: dot_pi/agent/settings.json
+    append_system_prompt: dot_pi/agent/APPEND_SYSTEM.md
+    packages:
+      - pi-effort 0.0.5 (npm package, pinned)
+
   neovim:
     base: LazyVim
     options:
