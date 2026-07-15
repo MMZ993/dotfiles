@@ -151,6 +151,10 @@ installed_software:
         version: latest
         install_via: npm
     coding_agents_utils:
+      - name: pi
+        version: latest
+        install_via: mise (npm:@earendil-works/pi-coding-agent)
+        note: Terminal-based AI coding agent
       - name: opencode
         version: latest
         install_via: curl
@@ -477,6 +481,7 @@ bashrc:
     # App Shortcuts
     t: tmux
     o: opencode
+    p: pi
     c: copilot
     chez: chezmoi
     s: ddgr
