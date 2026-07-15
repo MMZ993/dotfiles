@@ -285,6 +285,7 @@ configs:
       mouse: on
       escape_time: 10ms
       focus_events: on
+      extended_keys: on
       history_limit: 50000
       base_index: 1
       pane_base_index: 1
