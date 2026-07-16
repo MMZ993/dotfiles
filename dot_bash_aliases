@@ -88,7 +88,6 @@ alias mv='mv -i'
 # --- App Shortcuts ---
 alias t='tmux'
 alias o='opencode'
-alias p='pi'
 alias op='openportal'
 alias c='copilot'
 alias chez='chezmoi'

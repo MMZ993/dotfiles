@@ -137,6 +137,16 @@ todo() {
 
 
 
+# Pi wrapper: use the terminal alternate screen and restore scrollback on exit.
+p() {
+    local status
+    tput smcup && tput clear
+    command pi "$@"
+    status=$?
+    tput rmcup
+    return "$status"
+}
+
 # llm wrapper for easier use
 ai() {
     # 1. Set the default model (uses LLM_MODEL env var, or defaults to gpt-4o-mini)
