@@ -57,7 +57,7 @@ All dotfiles follow the `dot_` prefix naming convention and are managed by chezm
 - **Shell Configuration**
   - `.bashrc` - Main bash configuration with PATH setup, mise activation, starship prompt, fzf integration, and LS_COLORS
   - `.bash_profile` - Sources `.bashrc` for login shells
-  - `.bash_functions` - Custom functions: `mkcd`, `unpack`, `bck`, `ff`, `fdir`, `grepd`, `qfind`, `duh`, `cl`, `proc`, `dataurl`, `note`, `ai`
+  - `.bash_functions` - Custom functions: `mkcd`, `unpack`, `bck`, `ff`, `fdir`, `grepd`, `qfind`, `duh`, `cl`, `proc`, `dataurl`, `note`, `p`, `ai`
   - `.bash_aliases` - Smart tool aliases (eza, bat, nvim), navigation shortcuts, Git/Docker aliases, system info aliases
   - `.bash_completion.d/` - Directory for custom bash completions
 
@@ -67,6 +67,7 @@ All dotfiles follow the `dot_` prefix naming convention and are managed by chezm
 - **Editor and Terminal**
   - `.config/nvim/` - LazyVim configuration (Neovim)
   - `.tmux.conf` - Tmux configuration with TokyoNight theme, vi keybindings, mouse support, and TPM plugins (tmux-sensible, tmux-resurrect, tmux-continuum, tmux-yank)
+  - `.config/konsolerc` and `.local/share/konsole/` - Konsole Tokyo Night default profile and color scheme
   - `.config/starship.toml` - Starship prompt configuration with directory, git branch/status, and Python venv indicators
 
 - **Other Configurations**

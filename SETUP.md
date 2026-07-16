@@ -278,6 +278,12 @@ configs:
       lg: log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
       last: log -1 HEAD
 
+  konsole:
+    default_profile: TokyoNight
+    color_scheme: Tokyo Night
+    background: "#1a1b26"
+    foreground: "#c0caf5"
+
   tmux:
     general:
       default_terminal: screen-256color

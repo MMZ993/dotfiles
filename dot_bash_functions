@@ -140,7 +140,8 @@ todo() {
 # Pi wrapper: use the terminal alternate screen and restore scrollback on exit.
 p() {
     local status
-    tput smcup && tput clear
+    tput smcup
+    tput clear
     command pi "$@"
     status=$?
     tput rmcup
