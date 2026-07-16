@@ -37,7 +37,7 @@ else
 fi
 
 # Install codebase-memory-mcp
-if ! exists cbm; then
+if ! exists codebase-memory-mcp; then
     echo "Installing codebase-memory-mcp..."
     ARCH=$(uname -m)
     case $ARCH in
@@ -48,9 +48,9 @@ if ! exists cbm; then
     
     TMP_DIR=$(mktemp -d)
     cd "$TMP_DIR"
-    wget -q https://github.com/DeusData/codebase-memory-mcp/releases/latest/download/codebase-memory-mcp-linux-${ARCH}.tar.gz -O cbm.tar.gz
-    tar xzf cbm.tar.gz
-    mv codebase-memory-mcp "$HOME/.local/cli/bin/cbm"
+    wget -q https://github.com/DeusData/codebase-memory-mcp/releases/latest/download/codebase-memory-mcp-linux-${ARCH}.tar.gz -O codebase-memory-mcp.tar.gz
+    tar xzf codebase-memory-mcp.tar.gz
+    mv codebase-memory-mcp "$HOME/.local/cli/bin/codebase-memory-mcp"
     rm -rf "$TMP_DIR"
     echo "codebase-memory-mcp installed successfully."
 else

@@ -352,7 +352,7 @@ configs:
       - cc-safety-net (destructive command safety net)
       - "@tarquinen/opencode-dcp" (dynamic context pruning for long sessions)
     mcp_servers:
-      - cbm (codebase memory graph)
+      - cbm (codebase memory graph; command: codebase-memory-mcp)
       - aidex (file-level code index)
       - serena (LSP-backed symbol navigation)
     agents:
