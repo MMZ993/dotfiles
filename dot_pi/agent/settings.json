@@ -1,5 +1,5 @@
 {
-  "theme": "dark",
+  "theme": "tokyonight",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.6-terra",
   "defaultThinkingLevel": "low",
