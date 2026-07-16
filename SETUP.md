@@ -367,6 +367,7 @@ configs:
     append_system_prompt: dot_pi/agent/APPEND_SYSTEM.md
     packages:
       - pi-effort 0.0.5 (npm package, pinned)
+      - pi-config 1.0 (GitLab package: gitlab.mmz.sh/mmz-personal/pi-config; prompts, skills, and safety-net extension)
 
   neovim:
     base: LazyVim
