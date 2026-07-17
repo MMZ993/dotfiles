@@ -37,6 +37,13 @@ Skills are discovered separately. Load any available skill relevant to the task;
 - Before destructive actions or infrastructure changes, state the impact and request confirmation.
 </safety>
 
+<temporary_files>
+- Do not use `rm -rf` for temporary-file or workspace cleanup. Cleanup is non-essential; leave temporary directories in `/tmp` by default.
+- For small temporary artifacts that should be retained, move them to a project-local `./trash/` directory or `~/trash/` rather than deleting them recursively.
+- For large temporary artifacts, report their paths at the end of the task so the user can remove them.
+- Use `rmdir` only for an empty directory created during the current task when its exact absolute path is known. Do not construct destructive paths from variables, globs, pipes, or command substitution.
+</temporary_files>
+
 <communication>
 - Be concise and direct. Do not use emojis.
 - Do not add summaries or explanations after edits unless requested.
