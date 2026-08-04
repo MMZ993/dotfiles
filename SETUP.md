@@ -223,6 +223,9 @@ installed_software:
         version: latest
       - name: glab
         version: 1.91.0
+      - name: gcx
+        version: latest
+        install_via: mise (github:grafana/gcx)
       - name: logcli
         version: 3.7.2
         install_via: mise (loki-logcli / aqua:grafana/loki/logcli)
