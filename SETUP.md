@@ -233,6 +233,10 @@ installed_software:
       - name: ansible-lint
         version: latest
         install_via: pipx
+      - name: hugo
+        version: 0.164.0
+        install_via: mise (aqua:gohugoio/hugo, standard edition)
+        note: Pinned to match blog CI (.gitlab-ci.yml HUGO_VERSION); use standard edition, not extended
       - name: pre-commit
         version: latest
         install_via: pipx
