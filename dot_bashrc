@@ -137,6 +137,12 @@ else
 fi
 export CLICOLOR=1
 
+# Truecolor over SSH: COLORTERM is not forwarded by sshd, assume truecolor
+# for terminals that advertise 256color/direct support
+if [ -z "$COLORTERM" ] && [[ $TERM == *-256color || $TERM == *-direct ]]; then
+    export COLORTERM=truecolor
+fi
+
 # De-duplicate PATH
 if [ -n "$PATH" ]; then
     PATH=$(echo -n "$PATH" | awk -v RS=: '!($0 in a) {a[$0]; printf "%s%s", (NR==1 ? "" : ":"), $0}')

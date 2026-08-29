@@ -2,3 +2,6 @@
 # Dolt database files (added by bd init)
 .dolt/
 *.db
+
+# Local convenience symlink to pi-config checkout (package loaded via dot_pi/agent/settings.json)
+/pi-config
