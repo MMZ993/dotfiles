@@ -6,7 +6,7 @@ if [ -f /etc/bashrc ]; then
 fi
 
 # PATH setup
-for dir in "$HOME/.local/bin" "$HOME/.local/cli/bin" "$HOME/bin" "$HOME/.opencode/bin" "$HOME/.scripts"; do
+for dir in "$HOME/.local/bin" "$HOME/.local/cli/bin" "$HOME/bin" "$HOME/.scripts"; do
     if [ -d "$dir" ] && [[ ":$PATH:" != *":$dir:"* ]]; then
         PATH="$dir:$PATH"
     fi
@@ -57,9 +57,6 @@ export LESS="-RiN"
 # ddgr prompt color bug fix
 export DISABLE_PROMPT_COLOR=1
 
-# OpenCode - disable Claude Code integration
-export OPENCODE_DISABLE_CLAUDE_CODE=1
-
 # Firecrawl CLI telemetry
 export FIRECRAWL_NO_TELEMETRY=1
 
@@ -74,11 +71,6 @@ export LESS_TERMCAP_se=$'\E[0m'
 export LESS_TERMCAP_so=$'\E[01;44;33m'
 export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[1;32m'
-
-# Browser
-if command -v w3m >/dev/null 2>&1; then
-    export BROWSER='w3m'
-fi
 
 # Source secrets and private config if they exist (not in git)
 [ -f ~/.env_secrets ] && source ~/.env_secrets

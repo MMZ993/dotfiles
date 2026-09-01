@@ -62,7 +62,6 @@ installed_software:
       - wl-clipboard
       - unzip
       - nmap
-      - w3m
     debian/ubuntu:
       - build-essential
       - ca-certificates
@@ -155,18 +154,6 @@ installed_software:
         version: latest
         install_via: mise (npm:@earendil-works/pi-coding-agent)
         note: Terminal-based AI coding agent
-      - name: opencode
-        version: latest
-        install_via: curl
-        note: AI coding agent. Installs to ~/.opencode/bin. Config at dot_config/opencode/
-      - name: beads
-        version: 0.61.0
-        install_via: mise (npm:@beads/bd)
-        note: Provides bd CLI (temporarily pinned due to libicui18n.so.74 runtime mismatch in newer releases)
-      - name: dolt
-        version: latest
-        install_via: mise (aqua:dolthub/dolt)
-        note: Required by beads for Dolt-backed storage/server workflows
       - name: td
         version: latest
         install_via: mise (github:marcus/td)
@@ -185,14 +172,6 @@ installed_software:
         version: latest
         install_via: npm
         note: Token usage tracker for AI coding assistants
-      - name: kimaki
-        version: latest
-        install_via: npm
-        note: Discord bot integration for opencode AI coding
-      - name: openportal
-        version: latest
-        install_via: npm
-        note: Mobile-first web UI for opencode (portal)
       - name: agent-browser
         version: latest
         install_via: npm
@@ -359,22 +338,6 @@ configs:
     ignore:
       - "*.md" (prettier breaks YAML frontmatter in markdown files)
 
-  opencode:
-    config: dot_config/opencode/opencode.jsonc
-    plugins:
-      - cc-safety-net (destructive command safety net)
-      - "@tarquinen/opencode-dcp" (dynamic context pruning for long sessions)
-    mcp_servers:
-      - cbm (codebase memory graph; command: codebase-memory-mcp)
-      - aidex (file-level code index)
-      - serena (LSP-backed symbol navigation)
-    agents:
-      - build (primary coding agent, TDD workflow)
-      - ask (quick Q&A)
-      - explore (subagent, read-only codebase exploration)
-      - code-reviewer (subagent, post-plan review)
-    workflow_docs: dot_config/opencode/README.md
-
   pi:
     config: dot_pi/agent/settings.json
     append_system_prompt: dot_pi/agent/APPEND_SYSTEM.md
@@ -403,15 +366,13 @@ bashrc:
     PAGER: less
     LESS: "-RiN"
     DISABLE_PROMPT_COLOR: 1 (ddgr fix)
-    OPENCODE_DISABLE_CLAUDE_CODE: 1 (disable Claude Code integration)
     FIRECRAWL_NO_TELEMETRY: 1 (disable firecrawl-cli telemetry)
     HISTSIZE: 10000
     HISTFILESIZE: 20000
     HISTTIMEFORMAT: "%F %T "
     FZF_DEFAULT_OPTS: TokyoNight color scheme
     LS_COLORS: TokyoNight theme (via vivid or fallback)
-    PATH: "$HOME/.local/bin", "$HOME/.local/cli/bin", "$HOME/bin", "$HOME/.opencode/bin"
-    BROWSER: w3m (if available)
+    PATH: "$HOME/.local/bin", "$HOME/.local/cli/bin", "$HOME/bin", "$HOME/.scripts"
     LESS_TERMCAP_* variables for man page colors
 
   shell_options:
@@ -501,9 +462,7 @@ bashrc:
     mv: mv -i
     # App Shortcuts
     t: tmux
-    o: opencode
     p: pi
-    c: copilot
     chez: chezmoi
     s: ddgr
     # DevOps
