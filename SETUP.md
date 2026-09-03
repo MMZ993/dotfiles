@@ -197,14 +197,14 @@ installed_software:
       - name: lazygit
         version: latest
       - name: glab
-        version: 1.91.0
+        version: latest
       - name: gcx
         version: latest
         install_via: mise (github:grafana/gcx)
       - name: logcli
-        version: 3.7.2
+        version: latest
         install_via: mise (loki-logcli / aqua:grafana/loki/logcli)
-        note: Pinned because Grafana Loki also publishes operator releases; using latest may resolve to operator/v* without logcli assets
+        note: "latest" verified to resolve to the logcli release (not operator/v*) with mise 2026.2.8
       - name: ansible-lint
         version: latest
         install_via: pipx
