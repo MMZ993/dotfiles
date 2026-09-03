@@ -134,22 +134,3 @@ note() {
 todo() {
     ${EDITOR:-vi} "$HOME/.TODO.md"
 }
-
-
-
-# llm wrapper for easier use
-ai() {
-    # 1. Set the default model (uses LLM_MODEL env var, or defaults to gpt-4o-mini)
-    local model="${LLM_MODEL:-gpt-4o-mini}"
-
-    # 2. Check if there is data being piped in (stdin)
-    if [ ! -t 0 ]; then
-        # Case 2: Piped input
-        # We take all arguments ($*) as the system prompt and read stdin as the main prompt
-        llm -m "$model" -s "$*"
-    else
-        # Case 1: Direct call
-        # We combine all arguments ($*) into a single string
-        llm -m "$model" "$*"
-    fi
-}

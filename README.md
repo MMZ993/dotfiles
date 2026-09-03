@@ -56,7 +56,7 @@ All dotfiles follow the `dot_` prefix naming convention and are managed by chezm
 - **Shell Configuration**
   - `.bashrc` - Main bash configuration with PATH setup, mise activation, starship prompt, fzf integration, and LS_COLORS
   - `.bash_profile` - Sources `.bashrc` for login shells
-  - `.bash_functions` - Custom functions: `mkcd`, `unpack`, `bck`, `ff`, `fdir`, `grepd`, `qfind`, `duh`, `cl`, `proc`, `dataurl`, `note`, `p`, `ai`
+  - `.bash_functions` - Custom functions: `mkcd`, `unpack`, `bck`, `ff`, `fdir`, `grepd`, `qfind`, `duh`, `cl`, `proc`, `dataurl`, `note`, `p`
   - `.bash_aliases` - Smart tool aliases (eza, bat, nvim), navigation shortcuts, Git/Docker aliases, system info aliases
   - `.bash_completion.d/` - Directory for custom bash completions
 
@@ -157,7 +157,6 @@ Tools are organized into categories:
 - `jq` - JSON processor
 - `yq` - YAML processor
 - `delta` - Better git diff viewer
-- `pipx:llm` - LLM tool (with llm-gemini-code-assist plugin)
 
 #### System Monitoring
 

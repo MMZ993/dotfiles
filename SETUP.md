@@ -138,11 +138,6 @@ installed_software:
         version: latest
       - name: delta
         version: latest
-      - name: llm
-        version: latest
-        install_via: pipx
-        plugins:
-          - llm-gemini-code-assist
       - name: ddgr
         version: latest
         install_via: pipx
@@ -395,7 +390,6 @@ bashrc:
     proc: Find/manage processes by name
     dataurl: Create data URL from file
     note: Quick notes in ~/projects/notes/fleeting
-    ai: LLM wrapper (uses llm with piped input support)
 
   aliases:
     # Smart Tool Aliases
