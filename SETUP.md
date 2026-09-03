@@ -158,10 +158,6 @@ installed_software:
         version: latest
         install_via: mise (github:marcus/td)
         note: Local task tracker for AI coding sessions
-      - name: aidex-mcp
-        version: latest
-        install_via: npm
-        note: Requires native Node addon compilation support on Linux when no prebuilt binary is available
       - name: ctx7
         version: latest
         install_via: npm

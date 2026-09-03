@@ -39,5 +39,4 @@ node_modules/
 
 # Coding agents tools
 .agents/
-.aidex/
 .firecrawl/

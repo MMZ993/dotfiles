@@ -14,28 +14,6 @@ exists() {
     command -v "$1" >/dev/null 2>&1
 }
 
-# Generate aidex-cli using mcporter
-if exists mcporter && exists npx; then
-    if ! exists aidex-cli; then
-        echo "Generating aidex-cli using mcporter..."
-        TMP_DIR=$(mktemp -d)
-        cd "$TMP_DIR"
-        mcporter generate-cli "npx -y aidex-mcp@latest" --name aidex-cli --compile
-        if [ -f "aidex-cli" ]; then
-            mv aidex-cli "$HOME/.local/cli/bin/"
-        else
-            echo "Error: aidex-cli binary not found after generation"
-            exit 1
-        fi
-        rm -rf "$TMP_DIR"
-        echo "aidex-cli installed successfully."
-    else
-        echo "aidex-cli already exists."
-    fi
-else
-    echo "mcporter or npx not found. Skipping aidex-cli generation."
-fi
-
 # Install codebase-memory-mcp
 if ! exists codebase-memory-mcp; then
     echo "Installing codebase-memory-mcp..."
@@ -55,25 +33,6 @@ if ! exists codebase-memory-mcp; then
     echo "codebase-memory-mcp installed successfully."
 else
     echo "codebase-memory-mcp already exists."
-fi
-
-# Generate searxng CLI using mcporter
-if exists mcporter && exists npx; then
-    if ! exists searxng; then
-        echo "Generating searxng CLI using mcporter..."
-        TMP_DIR=$(mktemp -d)
-        cd "$TMP_DIR"
-        SEARXNG_URL=https://searxng.mmz.sh mcporter generate-cli "npx -y mcp-searxng@latest" --name searxng --compile
-        if [ -f "searxng" ]; then
-            mv searxng "$HOME/.local/cli/bin/"
-        fi
-        rm -rf "$TMP_DIR"
-        echo "searxng CLI installed successfully."
-    else
-        echo "searxng CLI already exists."
-    fi
-else
-    echo "mcporter or npx not found. Skipping searxng CLI generation."
 fi
 
 # Configure firecrawl
