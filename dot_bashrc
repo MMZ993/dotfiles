@@ -21,6 +21,9 @@ else
     [ -d "$HOME/.local/share/mise/shims" ] && export PATH="$HOME/.local/share/mise/shims:$PATH"
 fi
 
+# Pi managed installation
+[ -d "$HOME/.pi/agent/bin" ] && export PATH="$HOME/.pi/agent/bin:$PATH"
+
 # History settings
 HISTSIZE=10000
 HISTFILESIZE=20000

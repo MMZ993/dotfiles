@@ -7,6 +7,7 @@ installed_software:
     - ansible via uv (needs python3 from step 1)
     - mise via curl script
     - gh via curl script
+    - pi via managed installer
     - ansible_system_packages (docker, nvtop, etc.) via ansible playbook
     - mise_tools via mise install
 
@@ -54,6 +55,9 @@ installed_software:
       install: curl https://mise.run | sh
     - name: gh
       install: curl script to install GitHub CLI from releases
+    - name: pi
+      install: curl -fsSL https://pi.dev/install.sh | sh
+      purpose: Installs the Pi-managed CLI under ~/.pi/agent/bin
 
   # Via ansible playbooks (run after ansible is installed)
   ansible_system_packages:
@@ -145,10 +149,6 @@ installed_software:
         version: latest
         install_via: npm
     coding_agents_utils:
-      - name: pi
-        version: latest
-        install_via: mise (npm:@earendil-works/pi-coding-agent)
-        note: Terminal-based AI coding agent
       - name: td
         version: latest
         install_via: mise (github:marcus/td)
@@ -330,11 +330,13 @@ configs:
       - "*.md" (prettier breaks YAML frontmatter in markdown files)
 
   pi:
+    install: managed via https://pi.dev/install.sh
+    update: pi update
     config: dot_pi/agent/settings.json
     append_system_prompt: dot_pi/agent/APPEND_SYSTEM.md
     packages:
       - pi-effort 0.0.5 (npm package, pinned)
-      - pi-config 1.0 (GitLab package: gitlab.mmz.sh/mmz-personal/pi-config; prompts, skills, and safety-net extension)
+      - pi-config 3.2 (GitLab package: gitlab.mmz.sh/mmz-personal/pi-config; prompts, skills, and safety-net extension)
 
   neovim:
     base: LazyVim

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+if [ -x "$HOME/.pi/agent/bin/pi" ]; then
+    echo "Pi managed installation already present."
+    exit 0
+fi
+
+curl -fsSL https://pi.dev/install.sh | sh
