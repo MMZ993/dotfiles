@@ -1,7 +1,7 @@
 {
   "theme": "tokyonight",
   "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.6-terra",
+  "defaultModel": "gpt-6-luna",
   "defaultThinkingLevel": "low",
   "compaction": {
     "enabled": true,
@@ -10,6 +10,6 @@
   },
   "packages": [
     "npm:pi-effort@0.0.5",
-    "git:gitlab.mmz.sh/mmz-personal/pi-config@3.4"
+    "git:gitlab.mmz.sh/mmz-personal/pi-config@3.7"
   ]
 }
