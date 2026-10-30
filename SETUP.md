@@ -167,6 +167,10 @@ installed_software:
         version: latest
         install_via: npm
         note: Browser automation CLI for AI agents. Run `agent-browser install` after mise install to download Chrome for Testing.
+      - name: wrangler
+        version: latest
+        install_via: npm
+        note: Cloudflare Workers CLI
     monitoring:
       - name: btop
         version: latest

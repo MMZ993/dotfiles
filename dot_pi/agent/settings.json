@@ -10,6 +10,6 @@
   },
   "packages": [
     "npm:pi-effort@0.0.5",
-    "git:gitlab.mmz.sh/mmz-personal/pi-config@3.7"
+    "git:gitlab.mmz.sh/mmz-personal/pi-config@4.1"
   ]
 }
