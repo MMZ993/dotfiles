@@ -438,6 +438,7 @@ bashrc:
     gco: git checkout
     gundo: git reset --soft HEAD~1
     gunstage: git reset HEAD --
+    lg: lazygit
     # Docker
     d: docker
     dc: docker compose

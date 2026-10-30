@@ -59,6 +59,7 @@ alias gd='git diff'
 alias gco='git checkout'
 alias gundo='git reset --soft HEAD~1'
 alias gunstage='git reset HEAD --'
+alias lg='lazygit'
 
 # --- Docker ---
 alias d='docker'
