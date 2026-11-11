@@ -14,6 +14,24 @@
     update_cache: yes
   when: ansible_facts['os_family'] == "Debian"
 
+- name: Enable RPM Fusion free (Fedora only, for ffmpeg)
+  ansible.builtin.command:
+    cmd: dnf install -y https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_facts['distribution_major_version'] }}.noarch.rpm
+  args:
+    creates: /etc/yum.repos.d/rpmfusion-free.repo
+  when:
+    - ansible_facts['distribution'] == "Fedora"
+    - ansible_facts['distribution_major_version'] is version('41', '>=')
+
+- name: Install full ffmpeg (Fedora; replaces ffmpeg-free, which conflicts with the RPM Fusion build)
+  ansible.builtin.command:
+    cmd: dnf install -y --allowerasing ffmpeg
+  register: ffmpeg_install
+  changed_when: "'Nothing to do' not in ffmpeg_install.stdout | default('')"
+  when:
+    - ansible_facts['distribution'] == "Fedora"
+    - ansible_facts['distribution_major_version'] is version('41', '>=')
+
 - name: Install system dependencies (Fedora/Nobara/RHEL/AlmaLinux/Rocky Linux)
   dnf:
     name: "{{ fedora_packages }}"

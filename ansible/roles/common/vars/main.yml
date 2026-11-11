@@ -7,6 +7,7 @@ common_packages:
   - wl-clipboard
   - unzip
   - nmap
+  - ffmpeg
 
 # Distro-specific packages (concatenated with common)
 debian_packages: "{{ common_packages + ['build-essential', 'ca-certificates', 'gnupg', 'software-properties-common', 'xz-utils', 'netcat-openbsd', 'nfs-common'] }}"

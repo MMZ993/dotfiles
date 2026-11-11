@@ -66,6 +66,7 @@ installed_software:
       - wl-clipboard
       - unzip
       - nmap
+      - ffmpeg (Fedora: common role enables RPM Fusion free first)
     debian/ubuntu:
       - build-essential
       - ca-certificates
